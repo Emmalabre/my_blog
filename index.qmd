@@ -1,5 +1,5 @@
 ---
-title: "my_blog"
+title: "Le blog des JO"
 listing:
   contents: posts
   sort: "date desc"

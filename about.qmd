@@ -13,7 +13,6 @@ about:
     - icon: github
       text: Github
       href: https://github.com
-
 ---
 
-About this blog
+Ce blog vous propose d'en apprendre davantage sur les JO afin d'étaler votre culture générale durant les JO de Paris 2024.
