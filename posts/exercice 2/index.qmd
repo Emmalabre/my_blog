@@ -78,7 +78,7 @@ Cependant, ce ne sont pas les seules avec seulement 2 épreuves en 2020. En effe
 subset(data_medailles_sport_ete, Epreuves_2020 == 2, select = c(Discipline, Epreuves_2020))
 ```
 
-## Calculer du nombre d'éditions
+## Calcul du nombre d'éditions
 
 Nous proposons maintenant de créer une fonction nous permettant de calculer le nombre d'édition qu'il a eu pour chaque disciplines des JO. Avant de la créer nous allons suivre plusieurs étapes.
 
@@ -86,7 +86,13 @@ Nous proposons maintenant de créer une fonction nous permettant de calculer le 
 
 Nous allons commencer par une fonction simple permettant de faire le calcul en fonction de la date de début renseignée. Cette fonction ne prendra alors qu'un paramètre correspondant à cette date qui est donc de type entier.
 
-Cependant, avant de la créer, nous devons faire attention aux guerres mondiales qui influencent le nombre d'éditions. Ainsi, il est nécessaire de prendre en compte le fait qu'il n'y a pas eu d'édition des JO en 1916, 1940 et 1944. Donc notre fonction va devoir contenir des conditions telles que : - Si la date rentrée est inférieure ou égale à 1916 enlever 3, - Si la date renseignée est est supérieure à 1916 mais inférieure ou égale à 1940 enlever 2, - Si la date renseignée est supérieure à 1940 et inférieure ou égale à 1944 enlever 1.
+Cependant, avant de la créer, nous devons faire attention aux guerres mondiales qui influencent le nombre d'éditions. Ainsi, il est nécessaire de prendre en compte le fait qu'il n'y a pas eu d'édition des JO en 1916, 1940 et 1944. Donc notre fonction va devoir contenir des conditions telles que :
+
+\- Si la date rentrée est inférieure ou égale à 1916 enlever 3,
+
+\- Si la date renseignée est est supérieure à 1916 mais inférieure ou égale à 1940 enlever 2,
+
+\- Si la date renseignée est supérieure à 1940 et inférieure ou égale à 1944 enlever 1.
 
 ```{r}
 calcul_nb_editions_int <- function(depuis) {
@@ -118,7 +124,13 @@ Grâce à cette commande nous pouvons identifier les différents patterns:
 data_medailles_sport_ete$Annees
 ```
 
-Il y en a donc 3 : - "1908-1924" par exemple (motif : "-"), dans ce cas il faut faire (1924-1908)/4 - "depuis 1976" par exemple (motif : "depuis" ou "Depuis"), dans ce cas il faut faire (2020-1976)/4 - "1896" par exemple, dans ce cas il faut juste ajouter un au reste du calcul.
+Il y en a donc 3 :
+
+\- "1908-1924" par exemple (motif : "-"), dans ce cas il faut faire (1924-1908)/4
+
+\- "depuis 1976" par exemple (motif : "depuis" ou "Depuis"), dans ce cas il faut faire (2020-1976)/4
+
+\- "1896" par exemple, dans ce cas il faut juste ajouter un au reste du calcul.
 
 De plus, il faut également prendre en compte les guerres mondiales donc en 1916, 1940 et 1944 il n'y a pas eu de JO.
 
@@ -207,7 +219,7 @@ calcul_nb_editions("1904-1924, depuis 1948")
 
 Ici nous pouvons voir que notre fonction permet de renvoyer 6 éditions pour les disciplines étant apparu en 2000 et renvoie 24 pour celle(s) ayant eu lieu entre 1904-1924 puis depuis 1948.
 
-## Calculer du nombre de médailles
+## Calcul du nombre de médailles
 
 Maintenant que nous avons créé une fonction permettant de calculer le nombre d'éditions nous pouvons en créer une permettant de calculer le nombre de médailles. Pour se faire nous allons d'abord commencer par visualiser la colonne sur Athletes_medailles afin de voir à quoi elle ressemble.
 
@@ -246,7 +258,7 @@ calcul_medailles_individuelles(x)
 
 Comme nous pouvons le voir, Paavo Nurmi a reçu 12 médailles, Elisabeta Lipa en a reçu 8...
 
-Maintenant que nous avons déterminé une fonction permettant de calculer le nombre de médailles de chaque athlètes nous sommes désormais en mesure d'identifier les 3 athlètes ayant reçu le plus de médailles. Cependant, avant de faire cela, il faut appliquer notre fonction à toute la colonne Athletes_medailles afin de déterminer le nombre de médailles reçues par chacun des athlètes.
+Maintenant que nous avons déterminé une fonction permettant de calculer le nombre de médailles de chaque athlète nous sommes désormais en mesure d'identifier les 3 athlètes ayant reçu le plus de médailles. Cependant, avant de faire cela, il faut appliquer notre fonction à toute la colonne Athletes_medailles afin de déterminer le nombre de médailles reçues par chacun des athlètes.
 
 ```{r}
 resultats_medailles <- sapply(data_medailles_sport_ete$Athletes_medailles, calcul_medailles_individuelles)

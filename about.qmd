@@ -15,4 +15,4 @@ about:
       href: https://github.com
 ---
 
-Ce blog vous propose d'en apprendre davantage sur les JO afin d'étaler votre culture générale durant les JO de Paris 2024.
+Ce blog vous propose d'en apprendre davantage sur les JO afin d'être paré pour les JO de Paris 2024.

@@ -1,17 +1,17 @@
 ---
 title: "Bienvenue sur le blog des JO"
 author: "Emma Labre Blanc"
-date: "2024-02-28"
+date: "2024-02-26"
 categories: [news]
 image: "olymp.jpg"
 ---
 
 ## Bienvenue sur mon blog dédié aux Jeux Olympiques.
 
-Alors que la France s'apprête à accueillir pour la troisième fois les Jeux Olympiques, après les éditions de 1900 et 1924, cette année revêt alors une importance particulière pour les amateurs de sport et les passionnés de culture.
+Alors que la France s'apprête à accueillir pour la sixième fois les Jeux Olympiques, après les deux éditions d'été de 1900 et 1924 et les trois éditions d'hiver de 1924,1968 et 1992, cette année revêt alors une importance particulière pour les amateurs de sport et les passionnés de culture.
 
-C'est donc l'occasion idéale de vous présenter les sites olympiques qui accueilleront les disciplines des JO de paris 2024 mais également d'en apprendre davantage sur les athlètes, les médailles, les disciplines et les éditions olympiques passées.
+C'est donc l'occasion idéale de vous présenter les sites olympiques qui accueilleront les disciplines des JO de Paris 2024 mais également d'en apprendre davantage sur les athlètes, les médailles, les disciplines et les éditions olympiques passées.
 
-Rejoignez-nous pour une exploration enrichissante des événements passés et à venir et préparez-vous pour profiter au mieux des jeux de Paris 2024 avec des informations météorologiques en temps réel.
+Rejoignez-nous pour une exploration enrichissante des événements passés et à venir et préparez-vous au mieux pour profiter des jeux de Paris 2024 avec des informations météorologiques en temps réel.
 
 ![Image libre de droit](olymp.jpg){width="3002"}

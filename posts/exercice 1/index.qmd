@@ -1,16 +1,14 @@
 ---
 title: "Les JO de Paris 2024"
 author: "Emma Labre Blanc"
-date: "2024-02-28"
+date: "2024-02-27"
 categories: [news]
 image: "tour.jpg"
 ---
 
 Dans cet article, nous vous proposons d'en apprendre davantage sur les sites et disciplines olympiques des JO de Paris 2024.
 
-## Les JO de Paris 2024
-
-### Description des données utilisées
+## Description des données utilisées
 
 Les données utilisées sont issues du site web : https://data.gouv.fr
 
@@ -36,11 +34,15 @@ Ces 4 colonnes sont les suivantes :
 
 \- nom : indique le nom du site olympique
 
-\- sites_olympiques_paralympiques : indique s'io s'agit d'un site olympique, paralympique ou les 2
+\- sites_olympiques_paralympiques : indique s'il s'agit d'un site olympique, paralympique ou les 2
 
 \- sports : répertorie les disciplines accueillies sur les différents sites
 
-De plus, on peut noter que le jeu de données possède 31 lignes. - - \### Nombre de sites olympiques et paralympiques - - Plusieurs sites ont été prévus pour accueillir les différentes disciplines qui auront lieu pendant les JO de Paris 2024. Il y aura 26 sites olympiques et 19 sites paralympiques et certains sites accueilleront à la fois des disciplines olympiques et des disciplines paralympiques.
+De plus, on peut noter que le jeu de données possède 31 lignes. 
+
+## Nombre de sites olympiques et paralympiques
+
+Plusieurs sites ont été prévus pour accueillir les différentes disciplines qui auront lieu pendant les JO de Paris 2024. Il y aura 26 sites olympiques et 19 sites paralympiques et certains sites accueilleront à la fois des disciplines olympiques et des disciplines paralympiques.
 
 ```{r}
 # 3) Nombres de sites olympiques
@@ -51,8 +53,11 @@ sum(grepl("Site olympique", data_ex$sites_olympiques_paralympiques))
 # 4) Nombre de sites paralympiques
 sum(grepl("Site paralympique", data_ex$sites_olympiques_paralympiques))
 ```
+ 
+ 
+## Les disciplines accueillies
 
-\- - \### Les disciplines accueillies - - Concernant les disciplines accueillies sur les différents sites :
+Concernant les disciplines accueillies sur les différents sites :
 
 ```{r}
 # 5) Sites qui accueillent plusieurs disciplines
@@ -110,8 +115,11 @@ names(which.max(table(all_sports)))
 
 data_ex[grepl("Athlétisme", data_ex$sports), "nom"]
 ```
+ 
+ 
+## Situation géographique des sites olympiques
 
-\- - \### Situation géographique des sites olympiques - - Enfin, si on s'intéresse aux positions géographiques des différents sites, nous pouvons faire plusieurs constats.
+Enfin, si on s'intéresse aux positions géographiques des différents sites, nous pouvons faire plusieurs constats.
 
 Premièrement, les deux sites olympiques les plus proches sont le Grand Palais et Arena champs de Mars.
 
