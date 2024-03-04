@@ -1,13 +1,51 @@
 ---
-title: "Post With Code"
-author: "Harlow Malloc"
+title: "Prévisions météorologiques"
+author: "Emma Labre Blanc"
 date: "2024-03-02"
-categories: [news, code, analysis]
-image: "image.jpg"
+categories: [news, météo]
+image: "cloud.jpg"
 ---
 
-This is a post with executable code.
 
-```{r}
-1 + 1
+## Librairie OlympicsWeather
+
+La librairie R olympicsWeather permet d'obtenir et de visualiser les données météorologiques associées à une adresse ou à des coordonnées gps.
+
+Elle contient trois fonctions : get_forecast qui permet d'obtenir ces données sous forme de tibble, la fonction visualiser_forecast_d qui permet d'obtenir une visualisation de la météo par jour et une fonction visualiser_forecast_h qui offre la possibilité de visualiser la météo par heure.
+
+Par exemple :
+
+\- get_forecast("paris") ou get_forecast(48.8534,2.3488) renvoient toutes les deux des données concernant la température, la température ressentie, la probabilité de précipitation et les précipitations sous forme de tableau. Ici ces données concerneront la ville de Paris.
+
+\- visualiser_forecast_d("paris") ou visualiser_forecast_d(48.8534,2.3488) renverront ces mêmes informations mais par jour et sous forme de graphiques.
+
+\- visualiser_forecast_h("paris") ou visualiser_forecast_h(48.8534,2.3488) renverront également des graphiques mais par heures.
+
+Afin de pouvoir utiliser ce package dans votre environnement Rstudio, vous devrez effectuer le code suivant :
+
+```{r, eval=FALSE}
+# Ces commandes permettent d'installer la librairie olympicsWeather directement depuis le dépôt GitHub contenant le package.
+install.packages("remotes")
+library(remotes)
+
+remotes::install_github("Emmalabre/olympicsWeather")
+```
+
+## Prévisions météo à 7 jours pour le Stade de France
+
+```{r, warning=FALSE}
+library(olympicsWeather)
+olympicsWeather::visualiser_forecast_d("stade de France")
+```
+
+## Prévisions météo à 7 jours pour Tahiti
+
+```{r, warning=FALSE}
+visualiser_forecast_d("Tahiti")
+```
+
+## Prévisions météo à 7 jours pour les coordonnées gps 43.276703, 5.334791
+
+```{r, warning=FALSE}
+visualiser_forecast_d(43.276703,5.334791)
 ```

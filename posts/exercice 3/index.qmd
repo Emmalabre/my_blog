@@ -1,9 +1,9 @@
 ---
-title: "Bienvenue sur le blog des JO"
+title: "Les athlètes olympiques"
 author: "Emma Labre Blanc"
 date: "2024-02-28"
 categories: [news]
-image: "olymp.jpg"
+image: "athletes.jpg"
 ---
 
 ## Bienvenue sur mon blog dédié aux Jeux Olympiques.
@@ -14,4 +14,4 @@ C'est donc l'occasion idéale de vous présenter les sites olympiques qui accuei
 
 Rejoignez-nous pour une exploration enrichissante des événements passés et à venir et préparez-vous pour profiter au mieux des jeux de Paris 2024 avec des informations météorologiques en temps réel.
 
-![Image libre de droit](olymp.jpg){width="3002"}
+![Image libre de droit](athletes.jpg)

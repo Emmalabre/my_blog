@@ -1,0 +1,16 @@
+{
+  "hash": "723c3461e6d910ca9c26f07b0ce53838",
+  "result": {
+    "markdown": "---\ntitle: \"Prévisions météorologiques\"\nauthor: \"Emma Labre Blanc\"\ndate: \"2024-03-02\"\ncategories: [news, code, analysis]\nimage: \"image.jpg\"\n---\n\n\n## Librairie OlympicsWeather\n\nLa librairie R olympicsWeather permet d'obtenir et de visualiser les données météorologiques associées à une adresse ou à des coordonnées gps.\n\nElle contient trois fonctions : get_forecast qui permet d'obtenir ces données sous forme de tibble, la fonction visualiser_forecast_d qui permet d'obtenir une visualisation de la météo par jour et une fonction visualiser_forecast_h qui offre la possibilité de visualiser la météo par heure.\n\nPar exemple :\n\n\\- get_forecast(\"paris\") ou get_forecast(48.8534,2.3488) renvoient toutes les deux des données concernant la température, la température ressentie, la probabilité de précipitation et les précipitations sous forme de tableau. Ici ces données concerneront la ville de Paris.\n\n\\- visualiser_forecast_d(\"paris\") ou visualiser_forecast_d(48.8534,2.3488) renverront ces mêmes informations mais par jour et sous forme de graphiques.\n\n\\- visualiser_forecast_h(\"paris\") ou visualiser_forecast_h(48.8534,2.3488) renverront également des graphiques mais par heures.\n\nAfin de pouvoir utiliser ce package dans votre environnement Rstudio, vous devrez effectuer le code suivant :\n\n\n::: {.cell}\n\n```{.r .cell-code}\n# Ces commandes permettent d'installer la librairie olympicsWeather directement depuis le dépôt GitHub contenant le package.\ninstall.packages(\"remotes\")\nlibrary(remotes)\n\nremotes::install_github(\"Emmalabre/olympicsWeather\")\n```\n:::\n\n\n## Prévisions météo à 7 jours pour le Stade de France\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(olympicsWeather)\nolympicsWeather::visualiser_forecast_d(\"stade de France\")\n```\n\n::: {.cell-output .cell-output-stderr}\n```\nPassing 1 address to the Nominatim single address geocoder\n```\n:::\n\n::: {.cell-output .cell-output-stderr}\n```\nQuery completed in: 1 seconds\n```\n:::\n\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-2-1.png){width=672}\n:::\n:::\n\n\n## Prévisions météo à 7 jours pour Tahiti\n\n\n::: {.cell}\n\n```{.r .cell-code}\nvisualiser_forecast_d(\"Tahiti\")\n```\n\n::: {.cell-output .cell-output-stderr}\n```\nPassing 1 address to the Nominatim single address geocoder\n```\n:::\n\n::: {.cell-output .cell-output-stderr}\n```\nQuery completed in: 1 seconds\n```\n:::\n\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-3-1.png){width=672}\n:::\n:::\n\n\n## Prévisions météo à 7 jours pour les coordonnées gps 43.276703, 5.334791\n\n\n::: {.cell}\n\n```{.r .cell-code}\nvisualiser_forecast_d(43.276703,5.334791)\n```\n\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-4-1.png){width=672}\n:::\n:::\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

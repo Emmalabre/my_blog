@@ -1,0 +1,72 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "Ce blog vous propose d’en apprendre davantage sur les JO afin d’étaler votre culture générale durant les JO de Paris 2024."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Le blog des JO",
+    "section": "",
+    "text": "news\n\n\nmétéo\n\n\n\n\n\n\n\n\n\n\n\nMar 2, 2024\n\n\nEmma Labre Blanc\n\n\n\n\n\n\n  \n\n\n\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nFeb 28, 2024\n\n\nEmma Labre Blanc\n\n\n\n\n\n\n  \n\n\n\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nFeb 28, 2024\n\n\nEmma Labre Blanc\n\n\n\n\n\n\n  \n\n\n\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nFeb 28, 2024\n\n\nEmma Labre Blanc\n\n\n\n\n\n\n  \n\n\n\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nFeb 28, 2024\n\n\nEmma Labre Blanc\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/exercice 1/index.html",
+    "href": "posts/exercice 1/index.html",
+    "title": "Les JO de Paris 2024",
+    "section": "",
+    "text": "Alors que la France s’apprête à accueillir pour la troisième fois les Jeux Olympiques, après les éditions de 1900 et 1924, cette année revêt alors une importance particulière pour les amateurs de sport et les passionnés de culture.\nC’est donc l’occasion idéale de vous présenter les sites olympiques qui accueilleront les disciplines des JO de paris 2024 mais également d’en apprendre davantage sur les athlètes, les médailles, les disciplines et les éditions olympiques passées.\nRejoignez-nous pour une exploration enrichissante des événements passés et à venir et préparez-vous pour profiter au mieux des jeux de Paris 2024 avec des informations météorologiques en temps réel.\n\n\n\nimage libre de droit"
+  },
+  {
+    "objectID": "posts/exercice 2/index.html",
+    "href": "posts/exercice 2/index.html",
+    "title": "Les éditions olympiques",
+    "section": "",
+    "text": "Alors que la France s’apprête à accueillir pour la troisième fois les Jeux Olympiques, après les éditions de 1900 et 1924, cette année revêt alors une importance particulière pour les amateurs de sport et les passionnés de culture.\nC’est donc l’occasion idéale de vous présenter les sites olympiques qui accueilleront les disciplines des JO de paris 2024 mais également d’en apprendre davantage sur les athlètes, les médailles, les disciplines et les éditions olympiques passées.\nRejoignez-nous pour une exploration enrichissante des événements passés et à venir et préparez-vous pour profiter au mieux des jeux de Paris 2024 avec des informations météorologiques en temps réel.\n\n\n\nImage libre de droit"
+  },
+  {
+    "objectID": "posts/exercice 3/index.html",
+    "href": "posts/exercice 3/index.html",
+    "title": "Les athlètes olympiques",
+    "section": "",
+    "text": "Alors que la France s’apprête à accueillir pour la troisième fois les Jeux Olympiques, après les éditions de 1900 et 1924, cette année revêt alors une importance particulière pour les amateurs de sport et les passionnés de culture.\nC’est donc l’occasion idéale de vous présenter les sites olympiques qui accueilleront les disciplines des JO de paris 2024 mais également d’en apprendre davantage sur les athlètes, les médailles, les disciplines et les éditions olympiques passées.\nRejoignez-nous pour une exploration enrichissante des événements passés et à venir et préparez-vous pour profiter au mieux des jeux de Paris 2024 avec des informations météorologiques en temps réel.\n\n\n\nImage libre de droit"
+  },
+  {
+    "objectID": "posts/post-with-code/index.html",
+    "href": "posts/post-with-code/index.html",
+    "title": "Prévisions météorologiques",
+    "section": "",
+    "text": "La librairie R olympicsWeather permet d’obtenir et de visualiser les données météorologiques associées à une adresse ou à des coordonnées gps.\nElle contient trois fonctions : get_forecast qui permet d’obtenir ces données sous forme de tibble, la fonction visualiser_forecast_d qui permet d’obtenir une visualisation de la météo par jour et une fonction visualiser_forecast_h qui offre la possibilité de visualiser la météo par heure.\nPar exemple :\n- get_forecast(“paris”) ou get_forecast(48.8534,2.3488) renvoient toutes les deux des données concernant la température, la température ressentie, la probabilité de précipitation et les précipitations sous forme de tableau. Ici ces données concerneront la ville de Paris.\n- visualiser_forecast_d(“paris”) ou visualiser_forecast_d(48.8534,2.3488) renverront ces mêmes informations mais par jour et sous forme de graphiques.\n- visualiser_forecast_h(“paris”) ou visualiser_forecast_h(48.8534,2.3488) renverront également des graphiques mais par heures.\nAfin de pouvoir utiliser ce package dans votre environnement Rstudio, vous devrez effectuer le code suivant :\n\n# Ces commandes permettent d'installer la librairie olympicsWeather directement depuis le dépôt GitHub contenant le package.\ninstall.packages(\"remotes\")\nlibrary(remotes)\n\nremotes::install_github(\"Emmalabre/olympicsWeather\")"
+  },
+  {
+    "objectID": "posts/post-with-code/index.html#prévisions-météo-à-7-jours-pour-le-stade-de-france",
+    "href": "posts/post-with-code/index.html#prévisions-météo-à-7-jours-pour-le-stade-de-france",
+    "title": "Prévisions météorologiques",
+    "section": "Prévisions météo à 7 jours pour le Stade de France",
+    "text": "Prévisions météo à 7 jours pour le Stade de France\n\nlibrary(olympicsWeather)\nolympicsWeather::visualiser_forecast_d(\"stade de France\")\n\nPassing 1 address to the Nominatim single address geocoder\n\n\nQuery completed in: 1 seconds"
+  },
+  {
+    "objectID": "posts/post-with-code/index.html#prévisions-météo-à-7-jours-pour-tahiti",
+    "href": "posts/post-with-code/index.html#prévisions-météo-à-7-jours-pour-tahiti",
+    "title": "Prévisions météorologiques",
+    "section": "Prévisions météo à 7 jours pour Tahiti",
+    "text": "Prévisions météo à 7 jours pour Tahiti\n\nvisualiser_forecast_d(\"Tahiti\")\n\nPassing 1 address to the Nominatim single address geocoder\n\n\nQuery completed in: 1 seconds"
+  },
+  {
+    "objectID": "posts/post-with-code/index.html#prévisions-météo-à-7-jours-pour-les-coordonnées-gps-43.276703-5.334791",
+    "href": "posts/post-with-code/index.html#prévisions-météo-à-7-jours-pour-les-coordonnées-gps-43.276703-5.334791",
+    "title": "Prévisions météorologiques",
+    "section": "Prévisions météo à 7 jours pour les coordonnées gps 43.276703, 5.334791",
+    "text": "Prévisions météo à 7 jours pour les coordonnées gps 43.276703, 5.334791\n\nvisualiser_forecast_d(43.276703,5.334791)"
+  },
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "Bienvenue sur le blog des JO",
+    "section": "",
+    "text": "Alors que la France s’apprête à accueillir pour la troisième fois les Jeux Olympiques, après les éditions de 1900 et 1924, cette année revêt alors une importance particulière pour les amateurs de sport et les passionnés de culture.\nC’est donc l’occasion idéale de vous présenter les sites olympiques qui accueilleront les disciplines des JO de paris 2024 mais également d’en apprendre davantage sur les athlètes, les médailles, les disciplines et les éditions olympiques passées.\nRejoignez-nous pour une exploration enrichissante des événements passés et à venir et préparez-vous pour profiter au mieux des jeux de Paris 2024 avec des informations météorologiques en temps réel.\n\n\n\nImage libre de droit"
+  }
+]
