@@ -6,12 +6,382 @@ categories: [news]
 image: "grece.jpg"
 ---
 
-## Bienvenue sur mon blog dédié aux Jeux Olympiques.
+Dans cet article, nous vons proposons de découvrir le nombre d'éditions auxquelles chaque discipline a été présente et d'obtenir des informations sur l'attribution des médailles olympiques.
 
-Alors que la France s'apprête à accueillir pour la troisième fois les Jeux Olympiques, après les éditions de 1900 et 1924, cette année revêt alors une importance particulière pour les amateurs de sport et les passionnés de culture.
+## Les données utilisées
 
-C'est donc l'occasion idéale de vous présenter les sites olympiques qui accueilleront les disciplines des JO de paris 2024 mais également d'en apprendre davantage sur les athlètes, les médailles, les disciplines et les éditions olympiques passées.
+Les données utilisées pour cet article sont issues du site web suivant : https://fr.wikipedia.org/wiki/Liste_des_m%C3%A9daill%C3%A9s_olympiques.
 
-Rejoignez-nous pour une exploration enrichissante des événements passés et à venir et préparez-vous pour profiter au mieux des jeux de Paris 2024 avec des informations météorologiques en temps réel.
+De plus, nous avons dû effectuer quelques modifications avant de pouvoir les analyser :
+
+```{r, warning=FALSE, message=FALSE}
+# Importation des librairies
+library(rvest)
+library(purrr)
+library(lubridate)
+library(stringr)
+library(tibble)
+library(dplyr)
+```
+
+```{r}
+# Importation du jeu de données
+list_tables <-
+  session("https://fr.wikipedia.org/wiki/Liste_des_m%C3%A9daill%C3%A9s_olympiques") |>
+  html_elements(".wikitable") |>
+  html_table()
+
+list_tables
+```
+
+Cette commande nous a permis d'importer les données du site web wikipédia concernant les médailles olympiques. On a donc 6 tables avec des dimensions différentes.
+
+```{r}
+# Création dataframe data_medailles_sport_ete
+data_medailles_sport_ete = data.frame(list_tables[1])
+
+# Supression 1ère colonne et première ligne
+data_medailles_sport_ete = data_medailles_sport_ete[,-1]
+data_medailles_sport_ete = data_medailles_sport_ete[-1,]
+
+# Modification noms des colonnes
+colnames(data_medailles_sport_ete) <- c("Discipline", "Annees", "Editions",
+                                        "Epreuves_2020", "Or", "Argent", "Bronze", "Total", "Athletes_medailles",
+                                        "Athletes_or")
+
+# Transformation type de données
+data_medailles_sport_ete[, 3:8] <- lapply(data_medailles_sport_ete[, 3:8], as.integer)
+str(data_medailles_sport_ete)
+```
+
+Nous pouvons également noter que le jeu de données créé contient 30 observations et 10 variables et que les colonnes ont effectivement été renommées et pour certaines converties en colonnes d'entiers.
+
+## Les disciplines au cours du temps
+
+Avec ces données, nous pouvons en apprendre davantage sur les disciplines présentent lors des Jeux olympiques au cours du temps.
+
+Tout d'abord, les trois disciplines avec le plus de médailles distribuées depuis le début des JO sont : L'Athlétisme avec 3085 médailles distribuées, la natation avec 1814 et la lutte avec 1358 médailles distribuées.
+
+```{r}
+data_medailles_sport_ete[order(-data_medailles_sport_ete$Total), c(1,8)][1:3,]
+```
+
+Ensuite, les trois disciplines ayant eu le moins d'épreuves en 2020 sont le Football, le Golf et le Handball avec 2 épreuves chacune.
+
+```{r}
+data_medailles_sport_ete[order(data_medailles_sport_ete$Epreuves_2020),c(1,4) ][1:3, ]
+```
+
+Cependant, ce ne sont pas les seules avec seulement 2 épreuves en 2020. En effet, ce sont celles-ci qui se sont affichées seulement en raison de l'ordre alphabatique mais il y a également le Hockey sur gazon, la natation synchronisée, le pentathlon moderne, le volley_ball et le water-polo :
+
+```{r}
+subset(data_medailles_sport_ete, Epreuves_2020 == 2, select = c(Discipline, Epreuves_2020))
+```
+
+## Calculer du nombre d'éditions
+
+Nous proposons maintenant de créer une fonction nous permettant de calculer le nombre d'édition qu'il a eu pour chaque disciplines des JO. Avant de la créer nous allons suivre plusieurs étapes.
+
+### Création de la fonction calcul_nb_editions_int
+
+Nous allons commencer par une fonction simple permettant de faire le calcul en fonction de la date de début renseignée. Cette fonction ne prendra alors qu'un paramètre correspondant à cette date qui est donc de type entier.
+
+Cependant, avant de la créer, nous devons faire attention aux guerres mondiales qui influencent le nombre d'éditions. Ainsi, il est nécessaire de prendre en compte le fait qu'il n'y a pas eu d'édition des JO en 1916, 1940 et 1944. Donc notre fonction va devoir contenir des conditions telles que : - Si la date rentrée est inférieure ou égale à 1916 enlever 3, - Si la date renseignée est est supérieure à 1916 mais inférieure ou égale à 1940 enlever 2, - Si la date renseignée est supérieure à 1940 et inférieure ou égale à 1944 enlever 1.
+
+```{r}
+calcul_nb_editions_int <- function(depuis) {
+  Edition_nombre <- (((2020 - depuis) / 4) + 1)
+  
+  if (depuis <= 1916) {
+    Edition_nombre <- Edition_nombre - 3
+  } else if (depuis <= 1940) {
+    Edition_nombre <- Edition_nombre - 2
+  } else if (depuis <= 1944) {
+    Edition_nombre <- Edition_nombre - 1
+  }
+  
+  return(Edition_nombre)
+} 
+
+calcul_nb_editions_int(1992)
+```
+
+Grâce à cette fonction, il est possible d'observer qu'une discipline qui a fait sa première apparition aux JO en 1992 par exemple a été présente lors de 8 éditions.
+
+### Création de la fonction calcul_nb_editions_str
+
+Maintenant on va essayer de créer une fonction prenant en argument des données de type caractères. Il est alors nécessaire d'identifier les différents patterns afin de les traiter correctement.
+
+Grâce à cette commande nous pouvons identifier les différents patterns:
+
+```{r}
+data_medailles_sport_ete$Annees
+```
+
+Il y en a donc 3 : - "1908-1924" par exemple (motif : "-"), dans ce cas il faut faire (1924-1908)/4 - "depuis 1976" par exemple (motif : "depuis" ou "Depuis"), dans ce cas il faut faire (2020-1976)/4 - "1896" par exemple, dans ce cas il faut juste ajouter un au reste du calcul.
+
+De plus, il faut également prendre en compte les guerres mondiales donc en 1916, 1940 et 1944 il n'y a pas eu de JO.
+
+```{r}
+calcul_nb_editions_str <- function(patterns_str) {
+  motifs <- unlist(strsplit(patterns_str, ",\\s*"))
+  nb_editions <- numeric(length(motifs))
+  
+  for (i in seq_along(motifs)) {
+    motif <- motifs[i]
+    
+    if (grepl("-", motif)) {
+      annees <- as.numeric(unlist(strsplit(motif, "-")))
+      nb_editions[i] <- ((annees[2] - annees[1]) %/% 4) + 1
+      
+      if (1916 %in% seq(annees[1], annees[2], by = 4) && 
+          1940 %in% seq(annees[1], annees[2], by = 4) &&
+          1944 %in% seq(annees[1], annees[2], by = 4)) {
+        nb_editions[i] <- nb_editions[i] - 3
+      } else if ((1916 %in% seq(annees[1], annees[2], by = 4) && 1940 %in% seq(annees[1], annees[2], by = 4)) ||
+                 (1940 %in% seq(annees[1], annees[2], by = 4) && 1944 %in% seq(annees[1], annees[2], by = 4))) {
+        nb_editions[i] <- nb_editions[i] - 2
+      } else if (1916 %in% seq(annees[1], annees[2], by = 4) || 
+                 1940 %in% seq(annees[1], annees[2], by = 4) || 
+                 1944 %in% seq(annees[1], annees[2], by = 4)) {
+        nb_editions[i] <- nb_editions[i] - 1
+      }
+      
+    } else if (grepl("(?i)depuis", motif)) {
+      annee_debut <- as.numeric(gsub("\\D", "", motif))
+      nb_editions[i] <- length(seq(annee_debut, 2020, by = 4))
+      
+      if (annee_debut <= 1916) {
+        nb_editions[i] <- nb_editions[i] - 3
+      } else if (annee_debut <= 1940) {
+        nb_editions[i] <- nb_editions[i] - 2
+      } else if (annee_debut <= 1944) {
+        nb_editions[i] <- nb_editions[i] - 1
+      }
+      
+    } else {
+      nb_editions[i] <- 1
+    }
+  }
+  
+  return(sum(nb_editions, na.rm = TRUE))
+}
+
+calcul_nb_editions_str("1896, 1904, depuis 1920")
+```
+
+```{r}
+data_medailles_sport_ete %>%
+  filter(Annees == "1896, 1904,depuis 1920") %>%
+  select(Discipline)
+```
+
+Grâce à cette fonction, nous pouvons alors calculer le nombre d'éditions qu'il y a eu pour la discipline Haltérophilie par exemple. Nous trouvons 26, ce qui correspond à la valeur présente dans le tableau de données :
+
+```{r}
+data_medailles_sport_ete %>%
+  filter(Discipline == "Haltérophilie") %>%
+  select(Editions)
+```
+
+### Création de la fonction générique calcul_nb_editions
+
+Finalement nous allons créer une fonction générique permettant de calculer à la fois des données de type integer et des données de type caractère.
+
+```{r}
+calcul_nb_editions <- function(x) {
+  if (is.numeric(x)) {
+    return(calcul_nb_editions_int(x))
+  } else if (is.character(x)) {
+    return(calcul_nb_editions_str(x))
+  } else {
+    stop("Erreur")
+  }
+}
+
+calcul_nb_editions(2000)
+# renvoie 6
+calcul_nb_editions("1904-1924, depuis 1948")
+# renvoie 24
+```
+
+Ici nous pouvons voir que notre fonction permet de renvoyer 6 éditions pour les disciplines étant apparu en 2000 et renvoie 24 pour celle(s) ayant eu lieu entre 1904-1924 puis depuis 1948.
+
+## Calculer du nombre de médailles
+
+Maintenant que nous avons créé une fonction permettant de calculer le nombre d'éditions nous pouvons en créer une permettant de calculer le nombre de médailles. Pour se faire nous allons d'abord commencer par visualiser la colonne sur Athletes_medailles afin de voir à quoi elle ressemble.
+
+```{r}
+head(data_medailles_sport_ete$Athletes_medailles)
+```
+
+Le but de la fonction est d'afficher le nombre de médailles reçues par chacun des athlètes sauf que dans une même cellule, plusieurs athlètes peuvent être mentionnés comme nous pouvons le voir ci-dessus. Ainsi, il faut créer une fonction qui permette de distinguer les différents athlètes.
+
+```{r}
+calcul_medailles_individuelles <- function(data) {
+  athletes <- unlist(str_split(data, "\\)\\s", simplify = TRUE))
+  resultats <- numeric(length(athletes))
+  
+  for (i in seq_along(athletes)) {
+    medailles <- str_extract_all(athletes[i], "\\d+")
+    
+    if (length(medailles[[1]]) > 0) {
+      chiffres <- as.integer(medailles[[1]])
+      resultats[i] <- sum(chiffres)
+    }
+  }
+  
+  return(resultats[resultats != 0])
+}
+
+# Exemple résultats 
+x <- c("Paavo Nurmi (FIN) (9-3-0)",
+  "Elisabeta Lipă (ROU) (5-2-1)",
+  "Gao Ling (CHN) (2-1-1)",
+  "Teresa Edwards (USA) (4-0-1)",
+  "László Papp (HUN) (3-0-0) Félix Savón (CUB) (3-0-0) Teófilo Stevenson (CUB) (3-0-0) Roniel Iglesias (CUB) (2-0-1) Boris Lagutin (URS) (2-0-1) Oleg Saitov (RUS) (2-0-1) Zou Shiming (CHN) (2-0-1) Roberto Cammarelle (ITA) (1-1-1) Zbigniew Pietrzykowski (POL) (0-1-2) Arnold Vanderlyde (NED) (0-0-3)"
+)
+calcul_medailles_individuelles(x)
+```
+
+Comme nous pouvons le voir, Paavo Nurmi a reçu 12 médailles, Elisabeta Lipa en a reçu 8...
+
+Maintenant que nous avons déterminé une fonction permettant de calculer le nombre de médailles de chaque athlètes nous sommes désormais en mesure d'identifier les 3 athlètes ayant reçu le plus de médailles. Cependant, avant de faire cela, il faut appliquer notre fonction à toute la colonne Athletes_medailles afin de déterminer le nombre de médailles reçues par chacun des athlètes.
+
+```{r}
+resultats_medailles <- sapply(data_medailles_sport_ete$Athletes_medailles, calcul_medailles_individuelles)
+resultats_medailles
+```
+
+Maintenant que nous avons fait ça nous pouvons alors déterminer les athlètes ayant reçu le plus de médailles, il s'agit de Michael Phelps avec 28 médailles suivi de Larissa Latynina avec 18 médailles et Edoardo Mangiarotti avec 16 médailles :
+
+```{r}
+list_df <- list()
+
+for (i in seq_along(resultats_medailles)) {
+  matches <- str_match_all(data_medailles_sport_ete$Athletes_medailles[i], "([^\\(]+)\\s*\\([^)]+\\)\\s*\\((\\d+)-(\\d+)-(\\d+)\\)")
+  
+  df <- tibble(
+    Athlete = trimws(matches[[1]][, 1]),
+    Medailles = resultats_medailles[[i]]
+  )
+  
+  list_df[[i]] <- df
+}
+
+final_df <- do.call(rbind, list_df)
+final_df
+
+
+head(final_df[order(-final_df$Medailles), ],3)
+```
+
+## Les nationalités les plus représentées
+
+Il pourrait maintenant être intéressant de connaître les 3 nationalités les plus représentées, pour toutes les épreuves, au classement du nombre de médailles d'or individuelles reccueillies.
+
+On créé alors d'abord une fonction permettant d'extraire la nationalité puis on l'applique sur la colonne Athletes_or. Enfin, on agrége les résultats de manière à sommer toutes les lignes et à obtenir les 3 nations les plus représentées, et leur effectif :
+
+```{r}
+extraire_nationalite_athlete <- function(athletes) {
+  nationalites <- regmatches(athletes, gregexpr("\\(([A-Z]{3})\\)", athletes))[[1]]
+  return(table(nationalites))
+}
+
+extraire_nationalite_athlete("Paavo Nurmi (FIN) (9-3-0) Carl Lewis (USA) (9-1-0)")
+
+resultats_nationalites <- lapply(data_medailles_sport_ete$Athletes_or, extraire_nationalite_athlete)
+resultats_nationalites
+
+list_df_nationalites <- list()
+
+for (i in seq_along(resultats_nationalites)) {
+  df_nationalites <- as.data.frame(resultats_nationalites[[i]])
+  
+  list_df_nationalites[[i]] <- df_nationalites
+}
+
+df_nationalites <- do.call(rbind, list_df_nationalites)
+
+df_nationalites |>
+  group_by(nationalites) |>
+  summarise(Total = sum(Freq)) |>
+  arrange(desc(Total)) |>
+  head(3)
+```
+
+Ainsi, au vu des résultats, nous pouvons constater que les 3 nationalités les plus représentées, pour toutes les épreuves, au classement du nombre de médailles d'or individuelles reccueillies sont les USA avec 20 médailles d'or, la Chine avec 13 et Cuba avec 8.
+
+## Concernant les JO d'hiver
+
+Finalement, nous pouvons réappliquer ces fonctions sur le jeu de données sur les JO d'hiver.
+
+On commence par effectuer quelques modifications sur la base de données :
+
+```{r}
+jo_hiver = data.frame(list_tables[2])
+jo_hiver = jo_hiver[,-1]
+jo_hiver = jo_hiver[-1,]
+colnames(jo_hiver) <- c("Discipline", "Annees", "Editions",
+                                        "Epreuves_2020", "Or", "Argent", "Bronze", "Total", "Athletes_medailles",
+                                        "Athletes_or")
+```
+
+Ensuite on applique la fonction calcul_medailles_individuelles :
+
+```{r}
+# calcul_medailles_individuelles
+
+resultats_medailles_hiver <- sapply(jo_hiver$Athletes_medailles, calcul_medailles_individuelles)
+resultats_medailles_hiver
+
+
+resultats_medailles_hiver <- map(jo_hiver$Athletes_medailles, calcul_medailles_individuelles)
+resultats_medailles_hiver
+
+list_df_hiver <- map(jo_hiver$Athletes_medailles, ~{
+  resultats <- calcul_medailles_individuelles(.x)
+  df <- tibble(
+    Athlete = .x,
+    Medailles = resultats
+  )
+  return(df)
+})
+
+final_df_hiver <- bind_rows(list_df_hiver)
+final_df_hiver |> 
+  arrange(desc(Medailles)) |>
+  head(3)
+```
+
+On constate alors que les trois athlètes ayant reçu le plus de médailles individuelles pour les JO d'hiver sont Marit Bjorgen avec 15 médailles, Ole Einar Bjorndalen avec 13 médailles et Ireen Wust avec 11 médailles.
+
+Application de la fonction extraire_nationalite_athlete :
+
+```{r}
+resultats_nationalites_hiver <- lapply(jo_hiver$Athletes_or, extraire_nationalite_athlete)
+resultats_nationalites_hiver
+
+list_df_nationalites_hiver <- list()
+
+for (i in seq_along(resultats_nationalites_hiver)) {
+  df_nationalites_hiver <- as.data.frame(resultats_nationalites_hiver[[i]])
+  
+  list_df_nationalites_hiver[[i]] <- df_nationalites_hiver
+}
+
+df_nationalites_hiver <- do.call(rbind, list_df_nationalites_hiver)
+df_nationalites_hiver
+
+library(dplyr)
+
+df_nationalites_hiver |>
+  group_by(nationalites) |>
+  summarise(Total = sum(Freq)) |>
+  arrange(desc(Total)) |>
+  head(3)
+```
+
+Et grâce à cette fonction, on peut constater que les 3 nationalités les plus représentées, pour toutes les épreuves, au classement du nombre de médailles d'or individuelles reccueillies sont le Canada avec 8 médailles d'or, la Norvège avec 7 et l'Allemagne avec 6.
 
 ![Image libre de droit](grece.jpg)

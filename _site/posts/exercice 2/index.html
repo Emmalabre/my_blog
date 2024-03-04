@@ -22,6 +22,69 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -141,11 +204,1018 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="bienvenue-sur-mon-blog-dédié-aux-jeux-olympiques." class="level2">
-<h2 class="anchored" data-anchor-id="bienvenue-sur-mon-blog-dédié-aux-jeux-olympiques.">Bienvenue sur mon blog dédié aux Jeux Olympiques.</h2>
-<p>Alors que la France s’apprête à accueillir pour la troisième fois les Jeux Olympiques, après les éditions de 1900 et 1924, cette année revêt alors une importance particulière pour les amateurs de sport et les passionnés de culture.</p>
-<p>C’est donc l’occasion idéale de vous présenter les sites olympiques qui accueilleront les disciplines des JO de paris 2024 mais également d’en apprendre davantage sur les athlètes, les médailles, les disciplines et les éditions olympiques passées.</p>
-<p>Rejoignez-nous pour une exploration enrichissante des événements passés et à venir et préparez-vous pour profiter au mieux des jeux de Paris 2024 avec des informations météorologiques en temps réel.</p>
+<p>Dans cet article, nous vons proposons de découvrir le nombre d’éditions auxquelles chaque discipline a été présente et d’obtenir des informations sur l’attribution des médailles olympiques.</p>
+<section id="les-données-utilisées" class="level2">
+<h2 class="anchored" data-anchor-id="les-données-utilisées">Les données utilisées</h2>
+<p>Les données utilisées pour cet article sont issues du site web suivant : https://fr.wikipedia.org/wiki/Liste_des_m%C3%A9daill%C3%A9s_olympiques.</p>
+<p>De plus, nous avons dû effectuer quelques modifications avant de pouvoir les analyser :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Importation des librairies</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Importation du jeu de données</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>list_tables <span class="ot">&lt;-</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">session</span>(<span class="st">"https://fr.wikipedia.org/wiki/Liste_des_m%C3%A9daill%C3%A9s_olympiques"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="st">".wikitable"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>()</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>list_tables</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+# A tibble: 31 × 11
+   Discipline   Discipline   Années `Nombre de` `Nombre de` `médailles décernés`
+   &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;       &lt;chr&gt;       &lt;chr&gt;               
+ 1 "Discipline" Discipline   Années Éditions    Épreuves(e… Or                  
+ 2 ""           Athlétisme   Depui… 29          48          1028                
+ 3 ""           Aviron       Depui… 28          14          269                 
+ 4 ""           Badminton    Depui… 8           5           39                  
+ 5 ""           Basket-ball  Depui… 20          4           32                  
+ 6 ""           Boxe         1904,… 26          13          266                 
+ 7 ""           Canoë-kayak  Depui… 20          16          242                 
+ 8 ""           Cyclisme(ho… Depui… 29          22          263                 
+ 9 ""           Équitation   1900,… 26          6           151                 
+10 ""           Escrime      Depui… 29          12          223                 
+# ℹ 21 more rows
+# ℹ 5 more variables: `médailles décernés` &lt;chr&gt;, `médailles décernés` &lt;chr&gt;,
+#   `médailles décernés` &lt;chr&gt;,
+#   `Athlète(s) avec le plus de médailles (Or-Argent-Bronze)` &lt;chr&gt;,
+#   `Athlète(s) avec le plus de médailles d'or` &lt;chr&gt;
+
+[[2]]
+# A tibble: 16 × 11
+   Discipline   Discipline   Années `Nombre de` `Nombre de` `médailles décernés`
+   &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;       &lt;chr&gt;       &lt;chr&gt;               
+ 1 "Discipline" Discipline   Années Éditions    épreuves e… Or                  
+ 2 ""           Biathlon     1924,… 16          11          54                  
+ 3 ""           Bobsleigh    1924-… 21          3           39                  
+ 4 ""           Combiné nor… Depui… 22          3           28                  
+ 5 ""           Curling      1924,… 4           2           7                   
+ 6 ""           Hockey sur … Été&nbsp;:… 23          2           24                  
+ 7 ""           Luge         Depui… 14          4           37                  
+ 8 ""           Patinage ar… Été&nbsp;:… 24          4           77                  
+ 9 ""           Patinage de… Depui… 22          12          152                 
+10 ""           Patinage de… Depui… 7           8           32                  
+11 ""           Saut à ski   Depui… 22          4           38                  
+12 ""           Skeleton     1924,… 6           2           6                   
+13 ""           Ski acrobat… Depui… 7           10          18                  
+14 ""           Ski alpin    Depui… 19          10          132                 
+15 ""           Ski de fond  Depui… 22          12          134                 
+16 ""           Snowboard    Depui… 5           10          14                  
+# ℹ 5 more variables: `médailles décernés` &lt;chr&gt;, `médailles décernés` &lt;chr&gt;,
+#   `médailles décernés` &lt;chr&gt;,
+#   `Athlète(s) avec le plus de médailles (Or-Argent-Bronze)` &lt;chr&gt;,
+#   `Athlète(s) avec le plus de médailles d'or` &lt;chr&gt;
+
+[[3]]
+# A tibble: 14 × 8
+   Discipline   Discipline       Années `Nombre d'éditions` `Médailles décernés`
+   &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;  &lt;chr&gt;               &lt;chr&gt;               
+ 1 "Discipline" Discipline       Années Nombre d'éditions   Or                  
+ 2 ""           Baseball         1992–… 5                   5                   
+ 3 ""           Pelote basque    1900   1                   1                   
+ 4 ""           Cricket          1900   1                   1                   
+ 5 ""           Croquet          1900   1                   3                   
+ 6 ""           Jeu de paume     1908   1                   1                   
+ 7 ""           Crosse           1904–… 2                   2                   
+ 8 ""           Polo             1900,… 5                   5                   
+ 9 ""           Jeu de raquettes 1908   1                   2                   
+10 ""           Roque            1904   1                   1                   
+11 ""           Rugby à XV       1900,… 4                   4                   
+12 ""           Softball         1996–… 4                   4                   
+13 ""           Tir à la corde   1900–… 5                   5                   
+14 ""           Motonautisme     1908   5                   3                   
+# ℹ 3 more variables: `Médailles décernés` &lt;chr&gt;, `Médailles décernés` &lt;chr&gt;,
+#   `Médailles décernés` &lt;chr&gt;
+
+[[4]]
+# A tibble: 2 × 8
+  Discipline   Discipline        Années `Nombre d'éditions` `Médailles décernés`
+  &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;  &lt;chr&gt;               &lt;chr&gt;               
+1 "Discipline" Discipline        Années Nombre d'éditions   Or                  
+2 ""           Patrouille milit… 1924   1                   1                   
+# ℹ 3 more variables: `Médailles décernés` &lt;chr&gt;, `Médailles décernés` &lt;chr&gt;,
+#   `Médailles décernés` &lt;chr&gt;
+
+[[5]]
+# A tibble: 30 × 11
+   Jeux  Médaille  Médaille Hôte     Nombred'épreuves(ave…¹ `Médailles décernés`
+   &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;                  &lt;chr&gt;               
+ 1 Jeux  Médaille  Médaille Hôte     Nombred'épreuves(avec… Or                  
+ 2 1896  médaillés tableau  Athènes… 43                     43                  
+ 3 1900  médaillés tableau  Paris, … 95                     90                  
+ 4 1904  médaillés tableau  Saint-L… 91                     96                  
+ 5 1908  médaillés tableau  Londres… 110                    110                 
+ 6 1912  médaillés tableau  Stockho… 102                    103                 
+ 7 1920  médaillés tableau  Anvers,… 154                    156                 
+ 8 1924  médaillés tableau  Paris, … 126                    126                 
+ 9 1928  médaillés tableau  Amsterd… 109                    111                 
+10 1932  médaillés tableau  Los Ang… 117                    116                 
+# ℹ 20 more rows
+# ℹ abbreviated name: ¹​`Nombred'épreuves(avec médailles)`
+# ℹ 5 more variables: `Médailles décernés` &lt;chr&gt;, `Médailles décernés` &lt;chr&gt;,
+#   `Médailles décernés` &lt;chr&gt;,
+#   `Athlète(s) avec le plus de médailles (Or-Argent-Bronze)` &lt;chr&gt;,
+#   `Athlète(s) avec le plus de médailles d'or` &lt;chr&gt;
+
+[[6]]
+# A tibble: 24 × 11
+   Jeux  Médaille  Médaille Hôte     Nombred'épreuves(ave…¹ `Médailles décernés`
+   &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;                  &lt;chr&gt;               
+ 1 Jeux  Médaille  Médaille Hôte     Nombred'épreuves(avec… Or                  
+ 2 1924  médaillés tableau  Chamoni… 16                     16                  
+ 3 1928  médaillés tableau  Saint-M… 14                     14                  
+ 4 1932  médaillés tableau  Lake Pl… 14                     14                  
+ 5 1936  médaillés tableau  Garmisc… 17                     17                  
+ 6 1948  médaillés tableau  Saint-M… 22                     22                  
+ 7 1952  médaillés tableau  Oslo, N… 22                     22                  
+ 8 1956  médaillés tableau  Cortina… 24                     25                  
+ 9 1960  médaillés tableau  Squaw V… 27                     28                  
+10 1964  médaillés tableau  Innsbru… 34                     34                  
+# ℹ 14 more rows
+# ℹ abbreviated name: ¹​`Nombred'épreuves(avec médailles)`
+# ℹ 5 more variables: `Médailles décernés` &lt;chr&gt;, `Médailles décernés` &lt;chr&gt;,
+#   `Médailles décernés` &lt;chr&gt;,
+#   `Athlète(s) avec le plus de médailles (Or-Argent-Bronze)` &lt;chr&gt;,
+#   `Athlète(s) avec le plus de médailles d'or` &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>Cette commande nous a permis d’importer les données du site web wikipédia concernant les médailles olympiques. On a donc 6 tables avec des dimensions différentes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Création dataframe data_medailles_sport_ete</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>data_medailles_sport_ete <span class="ot">=</span> <span class="fu">data.frame</span>(list_tables[<span class="dv">1</span>])</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Supression 1ère colonne et première ligne</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>data_medailles_sport_ete <span class="ot">=</span> data_medailles_sport_ete[,<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>data_medailles_sport_ete <span class="ot">=</span> data_medailles_sport_ete[<span class="sc">-</span><span class="dv">1</span>,]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Modification noms des colonnes</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(data_medailles_sport_ete) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Discipline"</span>, <span class="st">"Annees"</span>, <span class="st">"Editions"</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"Epreuves_2020"</span>, <span class="st">"Or"</span>, <span class="st">"Argent"</span>, <span class="st">"Bronze"</span>, <span class="st">"Total"</span>, <span class="st">"Athletes_medailles"</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"Athletes_or"</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Transformation type de données</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>data_medailles_sport_ete[, <span class="dv">3</span><span class="sc">:</span><span class="dv">8</span>] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(data_medailles_sport_ete[, <span class="dv">3</span><span class="sc">:</span><span class="dv">8</span>], as.integer)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data_medailles_sport_ete)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   30 obs. of  10 variables:
+ $ Discipline        : chr  "Athlétisme" "Aviron" "Badminton" "Basket-ball" ...
+ $ Annees            : chr  "Depuis 1896" "Depuis 1900" "Depuis 1992" "Depuis 1936" ...
+ $ Editions          : int  29 28 8 20 26 20 29 26 29 27 ...
+ $ Epreuves_2020     : int  48 14 5 4 13 16 22 6 12 2 ...
+ $ Or                : int  1028 269 39 32 266 242 263 151 223 34 ...
+ $ Argent            : int  1030 268 39 32 266 241 261 149 223 34 ...
+ $ Bronze            : int  1027 273 43 32 472 243 260 148 221 35 ...
+ $ Total             : int  3085 810 121 96 1004 726 784 448 667 103 ...
+ $ Athletes_medailles: chr  "Paavo Nurmi (FIN) (9-3-0)" "Elisabeta Lipă (ROU) (5-2-1)" "Gao Ling (CHN) (2-1-1)" "Teresa Edwards (USA) (4-0-1)" ...
+ $ Athletes_or       : chr  "Paavo Nurmi (FIN) (9-3-0) Carl Lewis (USA) (9-1-0)" "Elisabeta Lipă (ROU) (5-2-1) Georgeta Damian (ROU) (5-0-1) Steven Redgrave (GBR) (5-0-1)" "Gao Ling (CHN) (2-1-1) Kim Dong-moon (KOR) (2-0-1) Zhang Nan (CHN) (2-0-1) Ge Fei (CHN) (2-0-0) Gu Jun (CHN) (2"| __truncated__ "Teresa Edwards (USA) (4-0-1) Sue Bird (USA) (4-0-0) Tamika Catchings (USA) (4-0-0) Lisa Leslie (USA) (4-0-0) Di"| __truncated__ ...</code></pre>
+</div>
+</div>
+<p>Nous pouvons également noter que le jeu de données créé contient 30 observations et 10 variables et que les colonnes ont effectivement été renommées et pour certaines converties en colonnes d’entiers.</p>
+</section>
+<section id="les-disciplines-au-cours-du-temps" class="level2">
+<h2 class="anchored" data-anchor-id="les-disciplines-au-cours-du-temps">Les disciplines au cours du temps</h2>
+<p>Avec ces données, nous pouvons en apprendre davantage sur les disciplines présentent lors des Jeux olympiques au cours du temps.</p>
+<p>Tout d’abord, les trois disciplines avec le plus de médailles distribuées depuis le début des JO sont : L’Athlétisme avec 3085 médailles distribuées, la natation avec 1814 et la lutte avec 1358 médailles distribuées.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data_medailles_sport_ete[<span class="fu">order</span>(<span class="sc">-</span>data_medailles_sport_ete<span class="sc">$</span>Total), <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">8</span>)][<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 Discipline Total
+2                Athlétisme  3085
+19 Natation(hommes, femmes)  1814
+18                    Lutte  1358</code></pre>
+</div>
+</div>
+<p>Ensuite, les trois disciplines ayant eu le moins d’épreuves en 2020 sont le Football, le Golf et le Handball avec 2 épreuves chacune.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>data_medailles_sport_ete[<span class="fu">order</span>(data_medailles_sport_ete<span class="sc">$</span>Epreuves_2020),<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">4</span>) ][<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Discipline Epreuves_2020
+11   Football             2
+12       Golf             2
+14   Handball             2</code></pre>
+</div>
+</div>
+<p>Cependant, ce ne sont pas les seules avec seulement 2 épreuves en 2020. En effet, ce sont celles-ci qui se sont affichées seulement en raison de l’ordre alphabatique mais il y a également le Hockey sur gazon, la natation synchronisée, le pentathlon moderne, le volley_ball et le water-polo :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(data_medailles_sport_ete, Epreuves_2020 <span class="sc">==</span> <span class="dv">2</span>, <span class="at">select =</span> <span class="fu">c</span>(Discipline, Epreuves_2020))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Discipline Epreuves_2020
+11              Football             2
+12                  Golf             2
+14              Handball             2
+16      Hockey sur gazon             2
+20 Natation synchronisée             2
+21    Pentathlon moderne             2
+30           Volley-ball             2
+31            Water polo             2</code></pre>
+</div>
+</div>
+</section>
+<section id="calculer-du-nombre-déditions" class="level2">
+<h2 class="anchored" data-anchor-id="calculer-du-nombre-déditions">Calculer du nombre d’éditions</h2>
+<p>Nous proposons maintenant de créer une fonction nous permettant de calculer le nombre d’édition qu’il a eu pour chaque disciplines des JO. Avant de la créer nous allons suivre plusieurs étapes.</p>
+<section id="création-de-la-fonction-calcul_nb_editions_int" class="level3">
+<h3 class="anchored" data-anchor-id="création-de-la-fonction-calcul_nb_editions_int">Création de la fonction calcul_nb_editions_int</h3>
+<p>Nous allons commencer par une fonction simple permettant de faire le calcul en fonction de la date de début renseignée. Cette fonction ne prendra alors qu’un paramètre correspondant à cette date qui est donc de type entier.</p>
+<p>Cependant, avant de la créer, nous devons faire attention aux guerres mondiales qui influencent le nombre d’éditions. Ainsi, il est nécessaire de prendre en compte le fait qu’il n’y a pas eu d’édition des JO en 1916, 1940 et 1944. Donc notre fonction va devoir contenir des conditions telles que : - Si la date rentrée est inférieure ou égale à 1916 enlever 3, - Si la date renseignée est est supérieure à 1916 mais inférieure ou égale à 1940 enlever 2, - Si la date renseignée est supérieure à 1940 et inférieure ou égale à 1944 enlever 1.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>calcul_nb_editions_int <span class="ot">&lt;-</span> <span class="cf">function</span>(depuis) {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  Edition_nombre <span class="ot">&lt;-</span> (((<span class="dv">2020</span> <span class="sc">-</span> depuis) <span class="sc">/</span> <span class="dv">4</span>) <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (depuis <span class="sc">&lt;=</span> <span class="dv">1916</span>) {</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    Edition_nombre <span class="ot">&lt;-</span> Edition_nombre <span class="sc">-</span> <span class="dv">3</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (depuis <span class="sc">&lt;=</span> <span class="dv">1940</span>) {</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    Edition_nombre <span class="ot">&lt;-</span> Edition_nombre <span class="sc">-</span> <span class="dv">2</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (depuis <span class="sc">&lt;=</span> <span class="dv">1944</span>) {</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    Edition_nombre <span class="ot">&lt;-</span> Edition_nombre <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(Edition_nombre)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="fu">calcul_nb_editions_int</span>(<span class="dv">1992</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8</code></pre>
+</div>
+</div>
+<p>Grâce à cette fonction, il est possible d’observer qu’une discipline qui a fait sa première apparition aux JO en 1992 par exemple a été présente lors de 8 éditions.</p>
+</section>
+<section id="création-de-la-fonction-calcul_nb_editions_str" class="level3">
+<h3 class="anchored" data-anchor-id="création-de-la-fonction-calcul_nb_editions_str">Création de la fonction calcul_nb_editions_str</h3>
+<p>Maintenant on va essayer de créer une fonction prenant en argument des données de type caractères. Il est alors nécessaire d’identifier les différents patterns afin de les traiter correctement.</p>
+<p>Grâce à cette commande nous pouvons identifier les différents patterns:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>data_medailles_sport_ete<span class="sc">$</span>Annees</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Depuis 1896"                      "Depuis 1900"                     
+ [3] "Depuis 1992"                      "Depuis 1936"                     
+ [5] "1904, 1908,depuis 1920"           "Depuis 1936"                     
+ [7] "Depuis 1896"                      "1900,depuis 1912"                
+ [9] "Depuis 1896"                      "1900–1928,depuis 1936"           
+[11] "1900–1904,depuis 2016"            "Depuis 1896"                     
+[13] "1936,depuis 1972"                 "1896, 1904,depuis 1920"          
+[15] "1908, 1920,depuis 1928"           "1964,depuis 1972"                
+[17] "1896,depuis 1904"                 "Depuis 1896"                     
+[19] "Depuis 1984"                      "Depuis 1912"                     
+[21] "Depuis 1904"                      "Depuis 2000"                     
+[23] "1896–1924,depuis 1988"            "Depuis 1988"                     
+[25] "1896, 1900,1908–1924,depuis 1932" "1900-1912, 1920,depuis 1972"     
+[27] "Depuis 2000"                      "1900,depuis 1908"                
+[29] "Depuis 1964"                      "1900,depuis 1908"                </code></pre>
+</div>
+</div>
+<p>Il y en a donc 3 : - “1908-1924” par exemple (motif : “-”), dans ce cas il faut faire (1924-1908)/4 - “depuis 1976” par exemple (motif : “depuis” ou “Depuis”), dans ce cas il faut faire (2020-1976)/4 - “1896” par exemple, dans ce cas il faut juste ajouter un au reste du calcul.</p>
+<p>De plus, il faut également prendre en compte les guerres mondiales donc en 1916, 1940 et 1944 il n’y a pas eu de JO.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>calcul_nb_editions_str <span class="ot">&lt;-</span> <span class="cf">function</span>(patterns_str) {</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  motifs <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">strsplit</span>(patterns_str, <span class="st">",</span><span class="sc">\\</span><span class="st">s*"</span>))</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  nb_editions <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">length</span>(motifs))</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(motifs)) {</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    motif <span class="ot">&lt;-</span> motifs[i]</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">grepl</span>(<span class="st">"-"</span>, motif)) {</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>      annees <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(motif, <span class="st">"-"</span>)))</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>      nb_editions[i] <span class="ot">&lt;-</span> ((annees[<span class="dv">2</span>] <span class="sc">-</span> annees[<span class="dv">1</span>]) <span class="sc">%/%</span> <span class="dv">4</span>) <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="dv">1916</span> <span class="sc">%in%</span> <span class="fu">seq</span>(annees[<span class="dv">1</span>], annees[<span class="dv">2</span>], <span class="at">by =</span> <span class="dv">4</span>) <span class="sc">&amp;&amp;</span> </span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>          <span class="dv">1940</span> <span class="sc">%in%</span> <span class="fu">seq</span>(annees[<span class="dv">1</span>], annees[<span class="dv">2</span>], <span class="at">by =</span> <span class="dv">4</span>) <span class="sc">&amp;&amp;</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>          <span class="dv">1944</span> <span class="sc">%in%</span> <span class="fu">seq</span>(annees[<span class="dv">1</span>], annees[<span class="dv">2</span>], <span class="at">by =</span> <span class="dv">4</span>)) {</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>        nb_editions[i] <span class="ot">&lt;-</span> nb_editions[i] <span class="sc">-</span> <span class="dv">3</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> <span class="cf">if</span> ((<span class="dv">1916</span> <span class="sc">%in%</span> <span class="fu">seq</span>(annees[<span class="dv">1</span>], annees[<span class="dv">2</span>], <span class="at">by =</span> <span class="dv">4</span>) <span class="sc">&amp;&amp;</span> <span class="dv">1940</span> <span class="sc">%in%</span> <span class="fu">seq</span>(annees[<span class="dv">1</span>], annees[<span class="dv">2</span>], <span class="at">by =</span> <span class="dv">4</span>)) <span class="sc">||</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>                 (<span class="dv">1940</span> <span class="sc">%in%</span> <span class="fu">seq</span>(annees[<span class="dv">1</span>], annees[<span class="dv">2</span>], <span class="at">by =</span> <span class="dv">4</span>) <span class="sc">&amp;&amp;</span> <span class="dv">1944</span> <span class="sc">%in%</span> <span class="fu">seq</span>(annees[<span class="dv">1</span>], annees[<span class="dv">2</span>], <span class="at">by =</span> <span class="dv">4</span>))) {</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>        nb_editions[i] <span class="ot">&lt;-</span> nb_editions[i] <span class="sc">-</span> <span class="dv">2</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> <span class="cf">if</span> (<span class="dv">1916</span> <span class="sc">%in%</span> <span class="fu">seq</span>(annees[<span class="dv">1</span>], annees[<span class="dv">2</span>], <span class="at">by =</span> <span class="dv">4</span>) <span class="sc">||</span> </span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">1940</span> <span class="sc">%in%</span> <span class="fu">seq</span>(annees[<span class="dv">1</span>], annees[<span class="dv">2</span>], <span class="at">by =</span> <span class="dv">4</span>) <span class="sc">||</span> </span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">1944</span> <span class="sc">%in%</span> <span class="fu">seq</span>(annees[<span class="dv">1</span>], annees[<span class="dv">2</span>], <span class="at">by =</span> <span class="dv">4</span>)) {</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>        nb_editions[i] <span class="ot">&lt;-</span> nb_editions[i] <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">grepl</span>(<span class="st">"(?i)depuis"</span>, motif)) {</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>      annee_debut <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">D"</span>, <span class="st">""</span>, motif))</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>      nb_editions[i] <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">seq</span>(annee_debut, <span class="dv">2020</span>, <span class="at">by =</span> <span class="dv">4</span>))</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (annee_debut <span class="sc">&lt;=</span> <span class="dv">1916</span>) {</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>        nb_editions[i] <span class="ot">&lt;-</span> nb_editions[i] <span class="sc">-</span> <span class="dv">3</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> <span class="cf">if</span> (annee_debut <span class="sc">&lt;=</span> <span class="dv">1940</span>) {</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>        nb_editions[i] <span class="ot">&lt;-</span> nb_editions[i] <span class="sc">-</span> <span class="dv">2</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> <span class="cf">if</span> (annee_debut <span class="sc">&lt;=</span> <span class="dv">1944</span>) {</span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>        nb_editions[i] <span class="ot">&lt;-</span> nb_editions[i] <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>      nb_editions[i] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">sum</span>(nb_editions, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a><span class="fu">calcul_nb_editions_str</span>(<span class="st">"1896, 1904, depuis 1920"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 26</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>data_medailles_sport_ete <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Annees <span class="sc">==</span> <span class="st">"1896, 1904,depuis 1920"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Discipline)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Discipline
+1 Haltérophilie</code></pre>
+</div>
+</div>
+<p>Grâce à cette fonction, nous pouvons alors calculer le nombre d’éditions qu’il y a eu pour la discipline Haltérophilie par exemple. Nous trouvons 26, ce qui correspond à la valeur présente dans le tableau de données :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>data_medailles_sport_ete <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Discipline <span class="sc">==</span> <span class="st">"Haltérophilie"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Editions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Editions
+1       26</code></pre>
+</div>
+</div>
+</section>
+<section id="création-de-la-fonction-générique-calcul_nb_editions" class="level3">
+<h3 class="anchored" data-anchor-id="création-de-la-fonction-générique-calcul_nb_editions">Création de la fonction générique calcul_nb_editions</h3>
+<p>Finalement nous allons créer une fonction générique permettant de calculer à la fois des données de type integer et des données de type caractère.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>calcul_nb_editions <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.numeric</span>(x)) {</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">calcul_nb_editions_int</span>(x))</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.character</span>(x)) {</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">calcul_nb_editions_str</span>(x))</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Erreur"</span>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="fu">calcul_nb_editions</span>(<span class="dv">2000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># renvoie 6</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">calcul_nb_editions</span>(<span class="st">"1904-1924, depuis 1948"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 24</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># renvoie 24</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ici nous pouvons voir que notre fonction permet de renvoyer 6 éditions pour les disciplines étant apparu en 2000 et renvoie 24 pour celle(s) ayant eu lieu entre 1904-1924 puis depuis 1948.</p>
+</section>
+</section>
+<section id="calculer-du-nombre-de-médailles" class="level2">
+<h2 class="anchored" data-anchor-id="calculer-du-nombre-de-médailles">Calculer du nombre de médailles</h2>
+<p>Maintenant que nous avons créé une fonction permettant de calculer le nombre d’éditions nous pouvons en créer une permettant de calculer le nombre de médailles. Pour se faire nous allons d’abord commencer par visualiser la colonne sur Athletes_medailles afin de voir à quoi elle ressemble.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_medailles_sport_ete<span class="sc">$</span>Athletes_medailles)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Paavo Nurmi (FIN) (9-3-0)"                                                                                                                                                                                                                                                                              
+[2] "Elisabeta Lipă (ROU) (5-2-1)"                                                                                                                                                                                                                                                                           
+[3] "Gao Ling (CHN) (2-1-1)"                                                                                                                                                                                                                                                                                 
+[4] "Teresa Edwards (USA) (4-0-1)"                                                                                                                                                                                                                                                                           
+[5] "László Papp (HUN) (3-0-0) Félix Savón (CUB) (3-0-0) Teófilo Stevenson (CUB) (3-0-0) Roniel Iglesias (CUB) (2-0-1) Boris Lagutin (URS) (2-0-1) Oleg Saitov (RUS) (2-0-1) Zou Shiming (CHN) (2-0-1) Roberto Cammarelle (ITA) (1-1-1) Zbigniew Pietrzykowski (POL) (0-1-2) Arnold Vanderlyde (NED) (0-0-3)"
+[6] "Birgit Fischer (GER) (8-4-0)"                                                                                                                                                                                                                                                                           </code></pre>
+</div>
+</div>
+<p>Le but de la fonction est d’afficher le nombre de médailles reçues par chacun des athlètes sauf que dans une même cellule, plusieurs athlètes peuvent être mentionnés comme nous pouvons le voir ci-dessus. Ainsi, il faut créer une fonction qui permette de distinguer les différents athlètes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>calcul_medailles_individuelles <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  athletes <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">str_split</span>(data, <span class="st">"</span><span class="sc">\\</span><span class="st">)</span><span class="sc">\\</span><span class="st">s"</span>, <span class="at">simplify =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  resultats <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">length</span>(athletes))</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(athletes)) {</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    medailles <span class="ot">&lt;-</span> <span class="fu">str_extract_all</span>(athletes[i], <span class="st">"</span><span class="sc">\\</span><span class="st">d+"</span>)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(medailles[[<span class="dv">1</span>]]) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>      chiffres <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(medailles[[<span class="dv">1</span>]])</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>      resultats[i] <span class="ot">&lt;-</span> <span class="fu">sum</span>(chiffres)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(resultats[resultats <span class="sc">!=</span> <span class="dv">0</span>])</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Exemple résultats </span></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Paavo Nurmi (FIN) (9-3-0)"</span>,</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Elisabeta Lipă (ROU) (5-2-1)"</span>,</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Gao Ling (CHN) (2-1-1)"</span>,</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Teresa Edwards (USA) (4-0-1)"</span>,</span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">"László Papp (HUN) (3-0-0) Félix Savón (CUB) (3-0-0) Teófilo Stevenson (CUB) (3-0-0) Roniel Iglesias (CUB) (2-0-1) Boris Lagutin (URS) (2-0-1) Oleg Saitov (RUS) (2-0-1) Zou Shiming (CHN) (2-0-1) Roberto Cammarelle (ITA) (1-1-1) Zbigniew Pietrzykowski (POL) (0-1-2) Arnold Vanderlyde (NED) (0-0-3)"</span></span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a><span class="fu">calcul_medailles_individuelles</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 12  8  4  5  3  3  3  3  3  3  3  3  3  3</code></pre>
+</div>
+</div>
+<p>Comme nous pouvons le voir, Paavo Nurmi a reçu 12 médailles, Elisabeta Lipa en a reçu 8…</p>
+<p>Maintenant que nous avons déterminé une fonction permettant de calculer le nombre de médailles de chaque athlètes nous sommes désormais en mesure d’identifier les 3 athlètes ayant reçu le plus de médailles. Cependant, avant de faire cela, il faut appliquer notre fonction à toute la colonne Athletes_medailles afin de déterminer le nombre de médailles reçues par chacun des athlètes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>resultats_medailles <span class="ot">&lt;-</span> <span class="fu">sapply</span>(data_medailles_sport_ete<span class="sc">$</span>Athletes_medailles, calcul_medailles_individuelles)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>resultats_medailles</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$`Paavo Nurmi (FIN) (9-3-0)`
+[1] 12
+
+$`Elisabeta Lipă (ROU) (5-2-1)`
+[1] 8
+
+$`Gao Ling (CHN) (2-1-1)`
+[1] 4
+
+$`Teresa Edwards (USA) (4-0-1)`
+[1] 5
+
+$...
+ [1] 3 3 3 3 3 3 3 3 3 3
+
+$`Birgit Fischer (GER) (8-4-0)`
+[1] 12
+
+$`Jason Kenny (GBR) (7-2-0)`
+[1] 9
+
+$`Isabell Werth (GER) (7-5-0)`
+[1] 12
+
+$`Edoardo Mangiarotti (ITA) (6-5-2)`
+[1] 13
+
+$`Christie Rampone (USA) (3-1-0)`
+[1] 4
+
+$`Chandler Egan (USA) (1-1-0) Lydia Ko (NZL) (0-1-1) Francis Newton (USA) (0-1-1)`
+[1] 2 2 2
+
+$`Larissa Latynina (URS) (9-5-4)`
+[1] 18
+
+$`Andreï Lavrov (RUS) (3-0-1) Oh Seong-ok (KOR) (1-2-1)`
+[1] 4 4
+
+$`Pýrros Dímas (GRE) (3-0-1) Ronny Weller (GER) (1-2-1) Nikolaj Pešalov (BUL, CRO) (1-1-2) Norbert Schemansky (USA) (1-1-2) Eko Yuli Irawan (INA) (0-2-2)`
+[1] 4 4 4 4 4
+
+$`Leslie Claudius (IND) (3-1-0) Udham Singh (IND) (3-1-0) Teun de Nooijer (NED) (2-2-0) Luciana Aymar (ARG) (0-2-2)`
+[1] 4 4 4 4
+
+$`Teddy Riner (FRA) (3-0-2) Ryōko Tani (JPN) (2-2-1)`
+[1] 5 5
+
+$`Wilfried Dietrich (RFA) (1-2-2)`
+[1] 5
+
+$`Michael Phelps (USA) (23-3-2)`
+[1] 28
+
+$`Svetlana Romashina (RUS) (7-0-0)`
+[1] 7
+
+$`Pavel Lednev (URS) (2-2-3)`
+[1] 7
+
+$`Dmitri Sautin (RUS) (2-2-4)`
+[1] 8
+
+$`Hwang Kyung-seon (KOR) (2-0-1) Steven López (USA) (2-0-1) Hadi Saei (IRI) (2-0-1) María Espinoza (MEX) (1-1-1)`
+[1] 3 3 3 3
+
+$`Venus Williams (USA) (4-1-0) Kitty McKane (GBR) (1-2-2)`
+[1] 5 5
+
+$`Ma Long (CHN) (5-0-0) Wang Nan (CHN) (4-1-0) Wang Hao (CHN) (2-3-0)`
+[1] 5 5 5
+
+$`Carl Osburn (USA) (5-4-2)`
+[1] 11
+
+$`Hubert Van Innis (BEL) (6-4-0)`
+[1] 10
+
+$`Jonathan Brownlee (GBR) (1-1-1)`
+[1] 3
+
+$`Ben Ainslie (GBR) (4-1-0) Robert Scheidt (BRA) (2-2-1) Torben Grael (BRA) (2-1-2)`
+[1] 5 5 5
+
+$`Ana Fernández (CUB) (3-0-1) Kerri Walsh (USA) (3-0-1) Inna Ryskal (URS) (2-2-0) Sérgio Dutra Santos (BRA) (2-2-0) Sergey Tetyukhin (RUS) (1-1-2)`
+[1] 4 4 4 4 4
+
+$`Dezső Gyarmati (HUN) (3-1-1)`
+[1] 5</code></pre>
+</div>
+</div>
+<p>Maintenant que nous avons fait ça nous pouvons alors déterminer les athlètes ayant reçu le plus de médailles, il s’agit de Michael Phelps avec 28 médailles suivi de Larissa Latynina avec 18 médailles et Edoardo Mangiarotti avec 16 médailles :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>list_df <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(resultats_medailles)) {</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  matches <span class="ot">&lt;-</span> <span class="fu">str_match_all</span>(data_medailles_sport_ete<span class="sc">$</span>Athletes_medailles[i], <span class="st">"([^</span><span class="sc">\\</span><span class="st">(]+)</span><span class="sc">\\</span><span class="st">s*</span><span class="sc">\\</span><span class="st">([^)]+</span><span class="sc">\\</span><span class="st">)</span><span class="sc">\\</span><span class="st">s*</span><span class="sc">\\</span><span class="st">((</span><span class="sc">\\</span><span class="st">d+)-(</span><span class="sc">\\</span><span class="st">d+)-(</span><span class="sc">\\</span><span class="st">d+)</span><span class="sc">\\</span><span class="st">)"</span>)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Athlete =</span> <span class="fu">trimws</span>(matches[[<span class="dv">1</span>]][, <span class="dv">1</span>]),</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Medailles =</span> resultats_medailles[[i]]</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  list_df[[i]] <span class="ot">&lt;-</span> df</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>final_df <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, list_df)</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>final_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 62 × 2
+   Athlete                         Medailles
+   &lt;chr&gt;                               &lt;dbl&gt;
+ 1 Paavo Nurmi (FIN) (9-3-0)              12
+ 2 Elisabeta Lipă (ROU) (5-2-1)            8
+ 3 Gao Ling (CHN) (2-1-1)                  4
+ 4 Teresa Edwards (USA) (4-0-1)            5
+ 5 László Papp (HUN) (3-0-0)               3
+ 6 Félix Savón (CUB) (3-0-0)               3
+ 7 Teófilo Stevenson (CUB) (3-0-0)         3
+ 8 Roniel Iglesias (CUB) (2-0-1)           3
+ 9 Boris Lagutin (URS) (2-0-1)             3
+10 Oleg Saitov (RUS) (2-0-1)               3
+# ℹ 52 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(final_df[<span class="fu">order</span>(<span class="sc">-</span>final_df<span class="sc">$</span>Medailles), ],<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  Athlete                           Medailles
+  &lt;chr&gt;                                 &lt;dbl&gt;
+1 Michael Phelps (USA) (23-3-2)            28
+2 Larissa Latynina (URS) (9-5-4)           18
+3 Edoardo Mangiarotti (ITA) (6-5-2)        13</code></pre>
+</div>
+</div>
+</section>
+<section id="les-nationalités-les-plus-représentées" class="level2">
+<h2 class="anchored" data-anchor-id="les-nationalités-les-plus-représentées">Les nationalités les plus représentées</h2>
+<p>Il pourrait maintenant être intéressant de connaître les 3 nationalités les plus représentées, pour toutes les épreuves, au classement du nombre de médailles d’or individuelles reccueillies.</p>
+<p>On créé alors d’abord une fonction permettant d’extraire la nationalité puis on l’applique sur la colonne Athletes_or. Enfin, on agrége les résultats de manière à sommer toutes les lignes et à obtenir les 3 nations les plus représentées, et leur effectif :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>extraire_nationalite_athlete <span class="ot">&lt;-</span> <span class="cf">function</span>(athletes) {</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  nationalites <span class="ot">&lt;-</span> <span class="fu">regmatches</span>(athletes, <span class="fu">gregexpr</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">(([A-Z]{3})</span><span class="sc">\\</span><span class="st">)"</span>, athletes))[[<span class="dv">1</span>]]</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">table</span>(nationalites))</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="fu">extraire_nationalite_athlete</span>(<span class="st">"Paavo Nurmi (FIN) (9-3-0) Carl Lewis (USA) (9-1-0)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>nationalites
+(FIN) (USA) 
+    1     1 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>resultats_nationalites <span class="ot">&lt;-</span> <span class="fu">lapply</span>(data_medailles_sport_ete<span class="sc">$</span>Athletes_or, extraire_nationalite_athlete)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>resultats_nationalites</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+nationalites
+(FIN) (USA) 
+    1     1 
+
+[[2]]
+nationalites
+(GBR) (ROU) 
+    1     2 
+
+[[3]]
+nationalites
+(CHN) (KOR) 
+    8     1 
+
+[[4]]
+nationalites
+(USA) 
+    5 
+
+[[5]]
+nationalites
+(CUB) (HUN) 
+    2     1 
+
+[[6]]
+nationalites
+(GER) 
+    1 
+
+[[7]]
+nationalites
+(GBR) 
+    1 
+
+[[8]]
+nationalites
+(GER) 
+    1 
+
+[[9]]
+nationalites
+(HUN) 
+    1 
+
+[[10]]
+nationalites
+(USA) 
+    4 
+
+[[11]]
+&lt; table of extent 0 &gt;
+
+[[12]]
+nationalites
+(URS) 
+    1 
+
+[[13]]
+nationalites
+(RUS) 
+    1 
+
+[[14]]
+nationalites
+(GRE) (TUR) 
+    2     2 
+
+[[15]]
+nationalites
+(AUS) (IND) 
+    1     7 
+
+[[16]]
+nationalites
+(FRA) (JPN) 
+    1     1 
+
+[[17]]
+nationalites
+(CUB) (JPN) 
+    1     1 
+
+[[18]]
+nationalites
+(USA) 
+    1 
+
+[[19]]
+nationalites
+(RUS) 
+    1 
+
+[[20]]
+nationalites
+(HUN) 
+    1 
+
+[[21]]
+nationalites
+(CHN) 
+    2 
+
+[[22]]
+nationalites
+(CHN) (GBR) (IRI) (KOR) (USA) 
+    2     1     1     1     1 
+
+[[23]]
+nationalites
+(USA) 
+    2 
+
+[[24]]
+nationalites
+(CHN) 
+    1 
+
+[[25]]
+nationalites
+(NOR) (USA) 
+    1     4 
+
+[[26]]
+nationalites
+(BEL) 
+    1 
+
+[[27]]
+nationalites
+(GBR) 
+    1 
+
+[[28]]
+nationalites
+(DEN) (GBR) 
+    1     1 
+
+[[29]]
+nationalites
+(CUB) (USA) 
+    5     2 
+
+[[30]]
+nationalites
+(HUN) 
+    1 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>list_df_nationalites <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(resultats_nationalites)) {</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  df_nationalites <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(resultats_nationalites[[i]])</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  list_df_nationalites[[i]] <span class="ot">&lt;-</span> df_nationalites</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>df_nationalites <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, list_df_nationalites)</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>df_nationalites <span class="sc">|&gt;</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(nationalites) <span class="sc">|&gt;</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Total =</span> <span class="fu">sum</span>(Freq)) <span class="sc">|&gt;</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Total)) <span class="sc">|&gt;</span></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  nationalites Total
+  &lt;fct&gt;        &lt;int&gt;
+1 (USA)           20
+2 (CHN)           13
+3 (CUB)            8</code></pre>
+</div>
+</div>
+<p>Ainsi, au vu des résultats, nous pouvons constater que les 3 nationalités les plus représentées, pour toutes les épreuves, au classement du nombre de médailles d’or individuelles reccueillies sont les USA avec 20 médailles d’or, la Chine avec 13 et Cuba avec 8.</p>
+</section>
+<section id="concernant-les-jo-dhiver" class="level2">
+<h2 class="anchored" data-anchor-id="concernant-les-jo-dhiver">Concernant les JO d’hiver</h2>
+<p>Finalement, nous pouvons réappliquer ces fonctions sur le jeu de données sur les JO d’hiver.</p>
+<p>On commence par effectuer quelques modifications sur la base de données :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>jo_hiver <span class="ot">=</span> <span class="fu">data.frame</span>(list_tables[<span class="dv">2</span>])</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>jo_hiver <span class="ot">=</span> jo_hiver[,<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>jo_hiver <span class="ot">=</span> jo_hiver[<span class="sc">-</span><span class="dv">1</span>,]</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(jo_hiver) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Discipline"</span>, <span class="st">"Annees"</span>, <span class="st">"Editions"</span>,</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"Epreuves_2020"</span>, <span class="st">"Or"</span>, <span class="st">"Argent"</span>, <span class="st">"Bronze"</span>, <span class="st">"Total"</span>, <span class="st">"Athletes_medailles"</span>,</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"Athletes_or"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ensuite on applique la fonction calcul_medailles_individuelles :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calcul_medailles_individuelles</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>resultats_medailles_hiver <span class="ot">&lt;-</span> <span class="fu">sapply</span>(jo_hiver<span class="sc">$</span>Athletes_medailles, calcul_medailles_individuelles)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>resultats_medailles_hiver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$`Ole Einar Bjørndalen (NOR) (8-4-1)`
+[1] 13
+
+$`Bogdan Musiol (RDA) (1-5-1)`
+[1] 7
+
+$`Felix Gottwald (AUT) (3-1-3)`
+[1] 7
+
+$`Anna Le Moine (SWE) (2-0-0) Cathrine Lindahl (SWE) (2-0-0) Eva Lund (SWE) (2-0-0) Anette Norberg (SWE) (2-0-0)\n Kaitlyn Lawes (CAN) (2-0-0)\n John Morris (CAN) (2-0-0)\n Kevin Martin (CAN) (1-1-0) Torger Nergård (NOR) (1-1-0) Mirjam Ott (SUI) (0-2-0)`
+[1] 2 2 2 2 2 2 2 2 2
+
+$`Jayna Hefford (CAN) (4-1-0) Hayley Wickenheiser (CAN) (4-1-0)`
+[1] 5 5
+
+$`Armin Zöggeler (ITA) (2-1-3)`
+[1] 6
+
+$`Tessa Virtue (CAN) (3-2-0)\n Scott Moir (CAN) (3-2-0)`
+[1] 5 5
+
+$`Ireen Wüst (NED) (5-5-1)`
+[1] 11
+
+$`/  Viktor Ahn (KOR / RUS) (6-0-2) Apolo Anton Ohno (USA) (2-2-4)\n Arianna Fontana (ITA) (1-2-5)`
+[1] 8 8 8
+
+$`Matti Nykänen (FIN) (4-1-0)`
+[1] 5
+
+$`Elizabeth Yarnold (GBR) (2-0-0) Martins Dukurs (LAT) (0-2-0) John Heaton (USA) (0-2-0) Gregor Stähli (SUI) (0-0-2)`
+[1] 2 2 2 2
+
+$`Kari Traa (NOR) (1-1-1)`
+[1] 3
+
+$`Kjetil André Aamodt (NOR) (4-2-2)`
+[1] 8
+
+$`Marit Bjørgen (NOR) (8-4-3)`
+[1] 15
+
+$`Kelly Clark (USA) (1-0-2)\n Shaun White (USA) (3-0-0)\n Jamie Anderson (USA) (2-1-0)\n Zan Kosir (SVN) (0-1-2)`
+[1] 3 3 3 3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>resultats_medailles_hiver <span class="ot">&lt;-</span> <span class="fu">map</span>(jo_hiver<span class="sc">$</span>Athletes_medailles, calcul_medailles_individuelles)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>resultats_medailles_hiver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] 13
+
+[[2]]
+[1] 7
+
+[[3]]
+[1] 7
+
+[[4]]
+[1] 2 2 2 2 2 2 2 2 2
+
+[[5]]
+[1] 5 5
+
+[[6]]
+[1] 6
+
+[[7]]
+[1] 5 5
+
+[[8]]
+[1] 11
+
+[[9]]
+[1] 8 8 8
+
+[[10]]
+[1] 5
+
+[[11]]
+[1] 2 2 2 2
+
+[[12]]
+[1] 3
+
+[[13]]
+[1] 8
+
+[[14]]
+[1] 15
+
+[[15]]
+[1] 3 3 3 3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>list_df_hiver <span class="ot">&lt;-</span> <span class="fu">map</span>(jo_hiver<span class="sc">$</span>Athletes_medailles, <span class="sc">~</span>{</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  resultats <span class="ot">&lt;-</span> <span class="fu">calcul_medailles_individuelles</span>(.x)</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Athlete =</span> .x,</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Medailles =</span> resultats</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(df)</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>final_df_hiver <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(list_df_hiver)</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>final_df_hiver <span class="sc">|&gt;</span> </span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Medailles)) <span class="sc">|&gt;</span></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  Athlete                            Medailles
+  &lt;chr&gt;                                  &lt;dbl&gt;
+1 Marit Bjørgen (NOR) (8-4-3)               15
+2 Ole Einar Bjørndalen (NOR) (8-4-1)        13
+3 Ireen Wüst (NED) (5-5-1)                  11</code></pre>
+</div>
+</div>
+<p>On constate alors que les trois athlètes ayant reçu le plus de médailles individuelles pour les JO d’hiver sont Marit Bjorgen avec 15 médailles, Ole Einar Bjorndalen avec 13 médailles et Ireen Wust avec 11 médailles.</p>
+<p>Application de la fonction extraire_nationalite_athlete :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>resultats_nationalites_hiver <span class="ot">&lt;-</span> <span class="fu">lapply</span>(jo_hiver<span class="sc">$</span>Athletes_or, extraire_nationalite_athlete)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>resultats_nationalites_hiver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+nationalites
+(NOR) 
+    1 
+
+[[2]]
+nationalites
+(GER) 
+    2 
+
+[[3]]
+nationalites
+(AUT) (FIN) (GER) (NOR) (RDA) 
+    1     1     1     2     1 
+
+[[4]]
+nationalites
+(CAN) (SWE) 
+    2     4 
+
+[[5]]
+nationalites
+(CAN) 
+    3 
+
+[[6]]
+nationalites
+(GER) 
+    3 
+
+[[7]]
+nationalites
+(CAN) (NOR) (SWE) (URS) 
+    2     1     1     1 
+
+[[8]]
+nationalites
+(URS) 
+    1 
+
+[[9]]
+&lt; table of extent 0 &gt;
+
+[[10]]
+nationalites
+(FIN) (SUI) 
+    1     1 
+
+[[11]]
+nationalites
+(GBR) 
+    1 
+
+[[12]]
+nationalites
+(CAN) (USA) 
+    1     1 
+
+[[13]]
+nationalites
+(CRO) (NOR) 
+    1     1 
+
+[[14]]
+nationalites
+(NOR) 
+    2 
+
+[[15]]
+nationalites
+(USA) 
+    1 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>list_df_nationalites_hiver <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(resultats_nationalites_hiver)) {</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  df_nationalites_hiver <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(resultats_nationalites_hiver[[i]])</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  list_df_nationalites_hiver[[i]] <span class="ot">&lt;-</span> df_nationalites_hiver</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>df_nationalites_hiver <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, list_df_nationalites_hiver)</span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>df_nationalites_hiver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   nationalites Freq
+1         (NOR)    1
+2         (GER)    2
+3         (AUT)    1
+4         (FIN)    1
+5         (GER)    1
+6         (NOR)    2
+7         (RDA)    1
+8         (CAN)    2
+9         (SWE)    4
+10        (CAN)    3
+11        (GER)    3
+12        (CAN)    2
+13        (NOR)    1
+14        (SWE)    1
+15        (URS)    1
+16        (URS)    1
+17        (FIN)    1
+18        (SUI)    1
+19        (GBR)    1
+20        (CAN)    1
+21        (USA)    1
+22        (CRO)    1
+23        (NOR)    1
+24        (NOR)    2
+25        (USA)    1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>df_nationalites_hiver <span class="sc">|&gt;</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(nationalites) <span class="sc">|&gt;</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Total =</span> <span class="fu">sum</span>(Freq)) <span class="sc">|&gt;</span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Total)) <span class="sc">|&gt;</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  nationalites Total
+  &lt;fct&gt;        &lt;int&gt;
+1 (CAN)            8
+2 (NOR)            7
+3 (GER)            6</code></pre>
+</div>
+</div>
+<p>Et grâce à cette fonction, on peut constater que les 3 nationalités les plus représentées, pour toutes les épreuves, au classement du nombre de médailles d’or individuelles reccueillies sont le Canada avec 8 médailles d’or, la Norvège avec 7 et l’Allemagne avec 6.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="grece.jpg" class="img-fluid figure-img"></p>

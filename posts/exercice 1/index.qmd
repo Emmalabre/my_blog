@@ -6,12 +6,157 @@ categories: [news]
 image: "tour.jpg"
 ---
 
-## Bienvenue sur mon blog dédié aux Jeux Olympiques.
+Dans cet article, nous vous proposons d'en apprendre davantage sur les sites et disciplines olympiques des JO de Paris 2024.
 
-Alors que la France s'apprête à accueillir pour la troisième fois les Jeux Olympiques, après les éditions de 1900 et 1924, cette année revêt alors une importance particulière pour les amateurs de sport et les passionnés de culture.
+## Les JO de Paris 2024
 
-C'est donc l'occasion idéale de vous présenter les sites olympiques qui accueilleront les disciplines des JO de paris 2024 mais également d'en apprendre davantage sur les athlètes, les médailles, les disciplines et les éditions olympiques passées.
+### Description des données utilisées
 
-Rejoignez-nous pour une exploration enrichissante des événements passés et à venir et préparez-vous pour profiter au mieux des jeux de Paris 2024 avec des informations météorologiques en temps réel.
+Les données utilisées sont issues du site web : https://data.gouv.fr
+
+```{r}
+# Lecture du fichier
+path <- "C:/Users/emmal/Documents/A- Master 1 ECAP/R avancé et Git/Exercices/data/exo_1.csv"
+data_ex <- read.table(path, sep = ";", header = TRUE, quote = "\"")
+```
+
+```{r}
+# 2) Description du jeu de données
+head(data_ex)
+colnames(data_ex)
+str(data_ex)
+dim(data_ex)
+```
+
+Nous pouvons constater que le jeu de données importé contient 4 colonnes qui comportent toutes des données de types chr (caractères).
+
+Ces 4 colonnes sont les suivantes :
+
+\- geo_point : qui donne les coordonnées gps des sites olympiques
+
+\- nom : indique le nom du site olympique
+
+\- sites_olympiques_paralympiques : indique s'io s'agit d'un site olympique, paralympique ou les 2
+
+\- sports : répertorie les disciplines accueillies sur les différents sites
+
+De plus, on peut noter que le jeu de données possède 31 lignes. - - \### Nombre de sites olympiques et paralympiques - - Plusieurs sites ont été prévus pour accueillir les différentes disciplines qui auront lieu pendant les JO de Paris 2024. Il y aura 26 sites olympiques et 19 sites paralympiques et certains sites accueilleront à la fois des disciplines olympiques et des disciplines paralympiques.
+
+```{r}
+# 3) Nombres de sites olympiques
+sum(grepl("Site olympique", data_ex$sites_olympiques_paralympiques))
+```
+
+```{r}
+# 4) Nombre de sites paralympiques
+sum(grepl("Site paralympique", data_ex$sites_olympiques_paralympiques))
+```
+
+\- - \### Les disciplines accueillies - - Concernant les disciplines accueillies sur les différents sites :
+
+```{r}
+# 5) Sites qui accueillent plusieurs disciplines
+data_ex$nb_sports <- sapply(strsplit(data_ex$sports, ","), length)
+sites_plusieurs_disciplines <- data_ex[data_ex$nb_sports > 1, ]
+sites_plusieurs_disciplines$nom
+nrow(sites_plusieurs_disciplines)
+19/31
+```
+
+Tout d'abord, nous pouvons constater que plusieurs sites accueillent plusieurs disciplines. Ils sont au nombre de 19, ce qui signifie que plus de 60% des sites accueillent plusieurs disciplines. Parmi eux, on peut par exemple citer le stade de France, le Grand Palais et l'Arena champ de mars.
+
+Ensuite, nous pouvons faire la liste des disciplines paralympiques accueillies par ces sites. (Afin de toutes les répertoriées, nous avons d'abord effectuer une analyse visuelle afin de déterminer les expressions permettant l'identification d'une discipline paralympique. Il s'agit alors des expressions 'Para', 'Céci', 'fauteuil' et 'assis.) La liste est alors la suivante.
+
+```{r}
+# 6) Disciplines paralympiques accueillies
+sites_plusieurs_disciplines$para_disciplines <- sapply(strsplit(sites_plusieurs_disciplines$sports, ","), function(sports) {
+  para_sports <- grep("^Para", sports, value = TRUE)
+  ceci_sports <- grep("Céci", sports, value = TRUE, ignore.case = TRUE)
+  assis_sports <- grep("assis", sports, value = TRUE, ignore.case = TRUE)
+  fauteuil_sports <- grep("fauteuil", sports, value = TRUE, ignore.case = TRUE)
+  
+  all_sports <- c(para_sports, ceci_sports, assis_sports, fauteuil_sports)
+  
+  if (length(all_sports) > 0) paste(all_sports, collapse = ",")
+  else NA
+})
+
+unique(na.omit(sites_plusieurs_disciplines$para_disciplines))
+```
+
+Concernant maintenant les sites accueillant le plus de disciplines différentes, ils sont au nombre de 10 et accueillent chacun 4 ou 3 disciplines. La liste est à retrouver ci dessous et parmi elle on retrouve des sites tels que les Invalides, le Grand Palais ou encore Arena Bercy.
+
+```{r}
+# 7) Sites accueillants le plus de disciplines différentes
+sites_plusieurs_disciplines <- sites_plusieurs_disciplines[order(-sites_plusieurs_disciplines$nb_sports), ]
+head(sites_plusieurs_disciplines[, c(2,5)], 10)
+```
+
+Il y a par ailleurs une discipline qui apparaît plus de fois que les autres, il s'agit de l'Athlétisme qui est accueillie par 4 sites différents :
+
+\- Stade de France
+
+\- Invalides
+
+\- Pont d'Iéna
+
+\- Hôtel de ville de Paris
+
+```{r}
+# 8)  Discipline ayant lieu sur le plus grand nombre de sites (et lesquels)
+all_sports <- unlist(strsplit(data_ex$sports, ","))
+table(all_sports)
+names(which.max(table(all_sports)))
+
+data_ex[grepl("Athlétisme", data_ex$sports), "nom"]
+```
+
+\- - \### Situation géographique des sites olympiques - - Enfin, si on s'intéresse aux positions géographiques des différents sites, nous pouvons faire plusieurs constats.
+
+Premièrement, les deux sites olympiques les plus proches sont le Grand Palais et Arena champs de Mars.
+
+```{r}
+# 9) Les deux sites les plus proches
+library(geosphere)
+
+data_ex$latitude <- sapply(strsplit(data_ex$geo_point, ","), function(x) x[1])
+data_ex$longitude <- sapply(strsplit(data_ex$geo_point, ","), function(x) x[2])
+
+str(data_ex)
+data_ex$latitude <- as.numeric(data_ex$latitude)
+data_ex$longitude <- as.numeric(data_ex$longitude)
+str(data_ex)
+
+distances <- distHaversine(data_ex[, c("latitude", "longitude")])
+distances
+indices_sites_proches <- order(distances)[1:2]
+indices_sites_proches
+data_ex[indices_sites_proches, c("nom", "latitude", "longitude")]
+```
+
+Deuxièmement, les deux sites olympiques les plus éloignés sont le stade nautique et le terrain des essences.
+
+```{r}
+# 10) Les deux sites les plus éloignés
+indices_sites_eloignes <- order(distances, decreasing = TRUE)[1:2]
+data_ex[indices_sites_eloignes, c("nom", "latitude", "longitude")]
+```
+
+Finalement, si jamais vous êtiez un heureux millionaire, vous pourriez envisager d'acheter un appartement situé au barycentre de l'ensemble des sites olympiques afin de pouvoir profiter de l'ensemble des épreuves olympiques. Cet appartement se situe alors 23 avenue Pierre 1er de Serbie, Quartier de Chaillot, 16ème arrondissement, Paris, Ile de France, France métropolitaire 75116 France.
+
+```{r}
+# 11) Appartement situé au barycentre de l'ensemble des sites olympiques
+library(tidygeocoder)
+library(tibble)
+
+latitude_barycentre <- mean(data_ex$latitude)
+longitude_barycentre <- mean(data_ex$longitude)
+
+latitude_barycentre
+longitude_barycentre
+barycentre <- tibble(lat = latitude_barycentre, long = longitude_barycentre)
+adresse <- reverse_geocode(barycentre, lat = "lat", lon = "long")
+adresse
+```
 
 ![image libre de droit](tour.jpg)

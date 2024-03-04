@@ -6,12 +6,225 @@ categories: [news]
 image: "athletes.jpg"
 ---
 
-## Bienvenue sur mon blog dédié aux Jeux Olympiques.
+Cet article vous offre l'opportunité d'approfondir vos connaissances sur les caractéristiques des athlètes olympiques, ainsi que sur les intervalles de temps qui séparent les JO de Rio, Tokyo et Paris.
 
-Alors que la France s'apprête à accueillir pour la troisième fois les Jeux Olympiques, après les éditions de 1900 et 1924, cette année revêt alors une importance particulière pour les amateurs de sport et les passionnés de culture.
+## Description des données utilisées
 
-C'est donc l'occasion idéale de vous présenter les sites olympiques qui accueilleront les disciplines des JO de paris 2024 mais également d'en apprendre davantage sur les athlètes, les médailles, les disciplines et les éditions olympiques passées.
+Avant tout, et pour des raisons de transparence nous commençons par vous présenter les données utilisées et la façon dont nous les avons modifié. Cela afin de vous garantir des informations fiables et de qualité.
 
-Rejoignez-nous pour une exploration enrichissante des événements passés et à venir et préparez-vous pour profiter au mieux des jeux de Paris 2024 avec des informations météorologiques en temps réel.
+```{r, warning=FALSE, message=FALSE}
+# Importation des librairies
+library(jsonlite)
+library(arrow)
+library(RSQLite)
+library(DBI)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(lubridate)
+```
+
+Liste des fichiers et extensions :
+
+```{r}
+files <- list.files("data/")
+files
+tools::file_ext(files)
+```
+
+Il y a 6 fichiers présents dans le dossier data :
+
+\_\_MACOSX et raw, data qui a pour extension sqlite olympics_athletes qui a pour extension json exo_1 qui a pour extension csv tokyo_athletes qui a pour extension parquet
+
+Lecture du fichier parquet :
+
+```{r}
+tokyo_athl <- read_parquet("C:/Users/emmal/Documents/A- Master 1 ECAP/R avancé et Git/Exercices/data/tokyo_athletes.parquet")
+dim(tokyo_athl)
+colnames(tokyo_athl)
+```
+
+Tokyo_athl contient 11085 lignes et 3 colonnes (Name, NOC et Discipline)
+
+Lecture du fichier json :
+
+```{r}
+olymp_athl <- fromJSON("C:/Users/emmal/Documents/A- Master 1 ECAP/R avancé et Git/Exercices/data/olympics_athletes.json")
+dim(olymp_athl)
+colnames(olymp_athl)
+```
+
+olymp_athl contient 269731 lignes et 13 colonnes : ID, Name, Sex, Age, Height, Weight, Team, NOC, Games, City, Sport, Event et Medal
+
+Connexion à sqlite :
+
+```{r}
+con <- dbConnect(RSQLite::SQLite(), dbname = "C:/Users/emmal/Documents/A- Master 1 ECAP/R avancé et Git/Exercices/data/data.sqlite")
+dbListTables(con)
+```
+
+Les tables présentes dans con sont olympics_athletes, tokyo_athletes, tokyo_medals et tokyo_teams
+
+Création de 2 tables avec dbWriteTable :
+
+```{r}
+dbWriteTable(con, name = "olympics_athletes", value = olymp_athl, overwrite = TRUE)
+dbWriteTable(con, "tokyo_athletes", tokyo_athl, overwrite = TRUE)
+```
+
+Inspection de olympics_athletes :
+
+```{r}
+dbListFields(con, "olympics_athletes")
+```
+
+Les colonnes présentes dans la table sont ID Name Sex Age Height Weight Team NOC Games City Sport Event et Medal
+
+Importation de la table olympics_athletes :
+
+```{r}
+table_olympics <- dbReadTable(con, "olympics_athletes")
+table_olympics <- as_tibble(table_olympics)
+table_olympics
+```
+
+Conversion de la colonne Sex avec mutate :
+
+```{r}
+str(table_olympics)
+table(table_olympics$Sex)
+
+table_olympics <- table_olympics |>
+  mutate(Sex = factor(Sex, levels = c("F","M"), labels = c("1","0")))
+str(table_olympics$Sex)
+head(table_olympics$Sex)
+```
+
+Création des colonnes Year et isSummer à partir de la colonne Games :
+
+```{r}
+View(table_olympics)
+
+table_olympics <- table_olympics |>
+  separate_wider_delim(
+    cols = Games,
+    names = c("Year", "isSummer"),
+    delim = " ",
+  ) |>
+  mutate(isSummer = ifelse(isSummer == "Summer", TRUE, FALSE))
+
+table_olympics$Year <- as.integer(table_olympics$Year)
+head(table_olympics[, c("Year", "isSummer")])
+```
+
+## La moyenne d'âge des athlètes de chaque édition des JO
+
+Calcul de la moyenne d'âge pour chaque édition des JO :
+
+```{r}
+summary(table_olympics$Age)
+
+moyenne <- table_olympics |>
+  filter(isSummer==TRUE) |>
+  group_by(Year) |>
+  summarise(moyenne_age_edition = mean(Age, na.rm=TRUE))
+
+moyenne
+```
+
+En moyenne, les athlètes olympiques ont 25 ans.
+
+L'année avec les athlètes les plus jeunes est 1896 avec une moyenne d'âge de 23,6 ans.
+
+```{r}
+moyenne[which.min(moyenne$moyenne_age_edition), ]
+```
+
+L'année avec les athlètes les plus vieux est 1932 avec une moyenne d'âge de 30,2 ans.
+
+```{r}
+moyenne[which.max(moyenne$moyenne_age_edition), ]
+```
+
+## La taille des athlètes féminines
+
+```{r}
+taille <- table_olympics |>
+  filter(isSummer==TRUE) |>
+  filter(Sex == "1") |>
+  group_by(Sport) |>
+  summarise(moyenne_taille_sport = mean(Height, na.rm=TRUE))
+
+taille[which.max(taille$moyenne_taille_sport), ] 
+```
+
+la discipline des JO d'été pour laquelle la taille des athlètes féminines est la plus grande est le basketball avec une taille moyenne de 1m82.
+
+Quelle a été cette discipline au cours de chacune des éditions ?
+
+```{r, warning=FALSE, message=FALSE}
+taille2 <- table_olympics |>
+  filter(isSummer==TRUE) |>
+  filter(Sex == "1") |>
+  group_by(Year, Sport) |>
+  summarise(moyenne_taille_sport = mean(Height, na.rm=TRUE))
+
+taille_annee <- taille2 |>
+  filter(!is.na(moyenne_taille_sport)) |>
+  group_by(Year) |>
+  slice_max(order_by = moyenne_taille_sport, n = 1, with_ties = FALSE) |>
+  ungroup()
+
+View(taille_annee)
+```
+
+Mais au fil du temps, bien que le basketball ait souvent eu les plus grandes athlètes olympiques, il n'est pas le seul. On retrouve également des athlètes de grande taille dans d'autres disciplines telles que l'athlétisme, l'escrime, l'équitation, la natation et le volleyball.
+
+Nombre de fois où chaque discipline a été la discipline avec les plus grandes athlètes :
+
+```{r}
+taille_annee |>
+  count(Sport, sort = TRUE)
+```
+
+10 fois pour le basketball, 4 fois pour le fencing et volleyball, 2 fois pour l'Athletisme et la natation et une fois pour equestrianism
+
+## Combien de temps sépare les éditions des JO de Rio, Tokyo et Paris ?
+
+```{r}
+texte <- "Les jeux olympiques d’été se déroulent normalement tous les 4 ans, durant les mois
+de Juillet et Août. Les jeux de Rio ont eu lieu du 5 Août 2016 au 20 Août 2016,
+ceux de Tokyo du 23 Juillet 2021 au 8 Août 2021, et ceux de Paris auront lieu du
+26 Juillet 2024 au 11 Août 2024. Plus de 10000 athlètes sont attendus du monde
+entier à Paris."
+
+dates <- str_extract_all(texte, "\\d{1,2} (Juillet|Août) \\d{4}")
+dates
+```
+
+```{r}
+# Remplacement des noms des mois par leur numéro :
+dates_format <- str_replace_all(dates[[1]], c("Juillet"="07", "Août"="08"))
+dates_format
+```
+
+```{r}
+# Conversion des éléments en date
+dates_transfo <- dmy(dates_format)
+dates_transfo
+```
+
+```{r}
+# Calcul du temps séparant les éditions en jours et semaines
+rio_tokyo_jours <- as.numeric(difftime(dmy("23 Juillet 2021"), dmy("20 Août 2016"), units = "days"))
+print(paste("Nombre de jours séparant les éditions de Rio et Tokyo :", rio_tokyo_jours, " jours."))
+tokyo_paris_jours <- as.numeric(difftime(dmy("26 Juillet 2024"), dmy("8 Août 2021"), units = "days"))
+print(paste("Nombre de jours séparant les éditions de Tokyo et Paris :", tokyo_paris_jours, " jours."))
+
+rio_tokyo_semaines <- round(rio_tokyo_jours / 7,0)
+print(paste("Nombre de semaines séparant les éditions de Rio et Tokyo :", rio_tokyo_semaines, " semaines."))
+tokyo_paris_semaines <- round(tokyo_paris_jours / 7,0)
+print(paste("Nombre de semaines séparant les éditions de Tokyo et Paris :", rio_tokyo_semaines, " semaines."))
+```
 
 ![Image libre de droit](athletes.jpg)

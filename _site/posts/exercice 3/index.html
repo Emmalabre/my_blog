@@ -22,6 +22,69 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -141,11 +204,338 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="bienvenue-sur-mon-blog-dédié-aux-jeux-olympiques." class="level2">
-<h2 class="anchored" data-anchor-id="bienvenue-sur-mon-blog-dédié-aux-jeux-olympiques.">Bienvenue sur mon blog dédié aux Jeux Olympiques.</h2>
-<p>Alors que la France s’apprête à accueillir pour la troisième fois les Jeux Olympiques, après les éditions de 1900 et 1924, cette année revêt alors une importance particulière pour les amateurs de sport et les passionnés de culture.</p>
-<p>C’est donc l’occasion idéale de vous présenter les sites olympiques qui accueilleront les disciplines des JO de paris 2024 mais également d’en apprendre davantage sur les athlètes, les médailles, les disciplines et les éditions olympiques passées.</p>
-<p>Rejoignez-nous pour une exploration enrichissante des événements passés et à venir et préparez-vous pour profiter au mieux des jeux de Paris 2024 avec des informations météorologiques en temps réel.</p>
+<p>Cet article vous offre l’opportunité d’approfondir vos connaissances sur les caractéristiques des athlètes olympiques, ainsi que sur les intervalles de temps qui séparent les JO de Rio, Tokyo et Paris.</p>
+<section id="description-des-données-utilisées" class="level2">
+<h2 class="anchored" data-anchor-id="description-des-données-utilisées">Description des données utilisées</h2>
+<p>Avant tout, et pour des raisons de transparence nous commençons par vous présenter les données utilisées et la façon dont nous les avons modifié. Cela afin de vous garantir des informations fiables et de qualité.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Importation des librairies</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arrow)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RSQLite)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Liste des fichiers et extensions :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">"data/"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>files</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>character(0)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>tools<span class="sc">::</span><span class="fu">file_ext</span>(files)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>logical(0)</code></pre>
+</div>
+</div>
+<p>Il y a 6 fichiers présents dans le dossier data :</p>
+<p>__MACOSX et raw, data qui a pour extension sqlite olympics_athletes qui a pour extension json exo_1 qui a pour extension csv tokyo_athletes qui a pour extension parquet</p>
+<p>Lecture du fichier parquet :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tokyo_athl <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"C:/Users/emmal/Documents/A- Master 1 ECAP/R avancé et Git/Exercices/data/tokyo_athletes.parquet"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tokyo_athl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 11085     3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(tokyo_athl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Name"       "NOC"        "Discipline"</code></pre>
+</div>
+</div>
+<p>Tokyo_athl contient 11085 lignes et 3 colonnes (Name, NOC et Discipline)</p>
+<p>Lecture du fichier json :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>olymp_athl <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="st">"C:/Users/emmal/Documents/A- Master 1 ECAP/R avancé et Git/Exercices/data/olympics_athletes.json"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(olymp_athl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 269731     13</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(olymp_athl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "ID"     "Name"   "Sex"    "Age"    "Height" "Weight" "Team"   "NOC"   
+ [9] "Games"  "City"   "Sport"  "Event"  "Medal" </code></pre>
+</div>
+</div>
+<p>olymp_athl contient 269731 lignes et 13 colonnes : ID, Name, Sex, Age, Height, Weight, Team, NOC, Games, City, Sport, Event et Medal</p>
+<p>Connexion à sqlite :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(RSQLite<span class="sc">::</span><span class="fu">SQLite</span>(), <span class="at">dbname =</span> <span class="st">"C:/Users/emmal/Documents/A- Master 1 ECAP/R avancé et Git/Exercices/data/data.sqlite"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dbListTables</span>(con)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "olympics_athletes" "tokyo_athletes"    "tokyo_medals"     
+[4] "tokyo_teams"      </code></pre>
+</div>
+</div>
+<p>Les tables présentes dans con sont olympics_athletes, tokyo_athletes, tokyo_medals et tokyo_teams</p>
+<p>Création de 2 tables avec dbWriteTable :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbWriteTable</span>(con, <span class="at">name =</span> <span class="st">"olympics_athletes"</span>, <span class="at">value =</span> olymp_athl, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dbWriteTable</span>(con, <span class="st">"tokyo_athletes"</span>, tokyo_athl, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Inspection de olympics_athletes :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbListFields</span>(con, <span class="st">"olympics_athletes"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "ID"     "Name"   "Sex"    "Age"    "Height" "Weight" "Team"   "NOC"   
+ [9] "Games"  "City"   "Sport"  "Event"  "Medal" </code></pre>
+</div>
+</div>
+<p>Les colonnes présentes dans la table sont ID Name Sex Age Height Weight Team NOC Games City Sport Event et Medal</p>
+<p>Importation de la table olympics_athletes :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>table_olympics <span class="ot">&lt;-</span> <span class="fu">dbReadTable</span>(con, <span class="st">"olympics_athletes"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>table_olympics <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(table_olympics)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>table_olympics</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 269,731 × 13
+      ID Name      Sex     Age Height Weight Team  NOC   Games City  Sport Event
+   &lt;int&gt; &lt;chr&gt;     &lt;chr&gt; &lt;int&gt;  &lt;int&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+ 1     1 A Dijiang M        24    180     80 China CHN   1992… Barc… Bask… Bask…
+ 2     2 A Lamusi  M        23    170     60 China CHN   2012… Lond… Judo  Judo…
+ 3     3 Gunnar N… M        24     NA     NA Denm… DEN   1920… Antw… Foot… Foot…
+ 4     4 Edgar Li… M        34     NA     NA Denm… DEN   1900… Paris Tug-… Tug-…
+ 5     5 Christin… F        21    185     82 Neth… NED   1988… Calg… Spee… Spee…
+ 6     5 Christin… F        21    185     82 Neth… NED   1988… Calg… Spee… Spee…
+ 7     5 Christin… F        25    185     82 Neth… NED   1992… Albe… Spee… Spee…
+ 8     5 Christin… F        25    185     82 Neth… NED   1992… Albe… Spee… Spee…
+ 9     5 Christin… F        27    185     82 Neth… NED   1994… Lill… Spee… Spee…
+10     5 Christin… F        27    185     82 Neth… NED   1994… Lill… Spee… Spee…
+# ℹ 269,721 more rows
+# ℹ 1 more variable: Medal &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>Conversion de la colonne Sex avec mutate :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(table_olympics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [269,731 × 13] (S3: tbl_df/tbl/data.frame)
+ $ ID    : int [1:269731] 1 2 3 4 5 5 5 5 5 5 ...
+ $ Name  : chr [1:269731] "A Dijiang" "A Lamusi" "Gunnar Nielsen Aaby" "Edgar Lindenau Aabye" ...
+ $ Sex   : chr [1:269731] "M" "M" "M" "M" ...
+ $ Age   : int [1:269731] 24 23 24 34 21 21 25 25 27 27 ...
+ $ Height: int [1:269731] 180 170 NA NA 185 185 185 185 185 185 ...
+ $ Weight: num [1:269731] 80 60 NA NA 82 82 82 82 82 82 ...
+ $ Team  : chr [1:269731] "China" "China" "Denmark" "Denmark/Sweden" ...
+ $ NOC   : chr [1:269731] "CHN" "CHN" "DEN" "DEN" ...
+ $ Games : chr [1:269731] "1992 Summer" "2012 Summer" "1920 Summer" "1900 Summer" ...
+ $ City  : chr [1:269731] "Barcelona" "London" "Antwerpen" "Paris" ...
+ $ Sport : chr [1:269731] "Basketball" "Judo" "Football" "Tug-Of-War" ...
+ $ Event : chr [1:269731] "Basketball Men's Basketball" "Judo Men's Extra-Lightweight" "Football Men's Football" "Tug-Of-War Men's Tug-Of-War" ...
+ $ Medal : chr [1:269731] NA NA NA "Gold" ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(table_olympics<span class="sc">$</span>Sex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     F      M 
+ 74378 195353 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>table_olympics <span class="ot">&lt;-</span> table_olympics <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Sex =</span> <span class="fu">factor</span>(Sex, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"F"</span>,<span class="st">"M"</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"1"</span>,<span class="st">"0"</span>)))</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(table_olympics<span class="sc">$</span>Sex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Factor w/ 2 levels "1","0": 2 2 2 2 1 1 1 1 1 1 ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(table_olympics<span class="sc">$</span>Sex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0 0 0 0 1 1
+Levels: 1 0</code></pre>
+</div>
+</div>
+<p>Création des colonnes Year et isSummer à partir de la colonne Games :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(table_olympics)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>table_olympics <span class="ot">&lt;-</span> table_olympics <span class="sc">|&gt;</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> Games,</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"Year"</span>, <span class="st">"isSummer"</span>),</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">delim =</span> <span class="st">" "</span>,</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">isSummer =</span> <span class="fu">ifelse</span>(isSummer <span class="sc">==</span> <span class="st">"Summer"</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>))</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>table_olympics<span class="sc">$</span>Year <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(table_olympics<span class="sc">$</span>Year)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(table_olympics[, <span class="fu">c</span>(<span class="st">"Year"</span>, <span class="st">"isSummer"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+   Year isSummer
+  &lt;int&gt; &lt;lgl&gt;   
+1  1992 TRUE    
+2  2012 TRUE    
+3  1920 TRUE    
+4  1900 TRUE    
+5  1988 FALSE   
+6  1988 FALSE   </code></pre>
+</div>
+</div>
+</section>
+<section id="la-moyenne-dâge-des-athlètes-de-chaque-édition-des-jo" class="level2">
+<h2 class="anchored" data-anchor-id="la-moyenne-dâge-des-athlètes-de-chaque-édition-des-jo">La moyenne d’âge des athlètes de chaque édition des JO</h2>
+<p>Calcul de la moyenne d’âge pour chaque édition des JO :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(table_olympics<span class="sc">$</span>Age)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+  10.00   21.00   24.00   25.45   28.00   97.00    9315 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>moyenne <span class="ot">&lt;-</span> table_olympics <span class="sc">|&gt;</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(isSummer<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">|&gt;</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">moyenne_age_edition =</span> <span class="fu">mean</span>(Age, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>moyenne</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 29 × 2
+    Year moyenne_age_edition
+   &lt;int&gt;               &lt;dbl&gt;
+ 1  1896                23.6
+ 2  1900                28.9
+ 3  1904                26.7
+ 4  1906                27.1
+ 5  1908                27.0
+ 6  1912                27.5
+ 7  1920                29.3
+ 8  1924                28.1
+ 9  1928                28.0
+10  1932                30.2
+# ℹ 19 more rows</code></pre>
+</div>
+</div>
+<p>En moyenne, les athlètes olympiques ont 25 ans.</p>
+<p>L’année avec les athlètes les plus jeunes est 1896 avec une moyenne d’âge de 23,6 ans.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>moyenne[<span class="fu">which.min</span>(moyenne<span class="sc">$</span>moyenne_age_edition), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+   Year moyenne_age_edition
+  &lt;int&gt;               &lt;dbl&gt;
+1  1896                23.6</code></pre>
+</div>
+</div>
+<p>L’année avec les athlètes les plus vieux est 1932 avec une moyenne d’âge de 30,2 ans.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>moyenne[<span class="fu">which.max</span>(moyenne<span class="sc">$</span>moyenne_age_edition), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+   Year moyenne_age_edition
+  &lt;int&gt;               &lt;dbl&gt;
+1  1932                30.2</code></pre>
+</div>
+</div>
+</section>
+<section id="la-taille-des-athlètes-féminines" class="level2">
+<h2 class="anchored" data-anchor-id="la-taille-des-athlètes-féminines">La taille des athlètes féminines</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>taille <span class="ot">&lt;-</span> table_olympics <span class="sc">|&gt;</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(isSummer<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Sex <span class="sc">==</span> <span class="st">"1"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Sport) <span class="sc">|&gt;</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">moyenne_taille_sport =</span> <span class="fu">mean</span>(Height, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>taille[<span class="fu">which.max</span>(taille<span class="sc">$</span>moyenne_taille_sport), ] </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+  Sport      moyenne_taille_sport
+  &lt;chr&gt;                     &lt;dbl&gt;
+1 Basketball                 182.</code></pre>
+</div>
+</div>
+<p>la discipline des JO d’été pour laquelle la taille des athlètes féminines est la plus grande est le basketball avec une taille moyenne de 1m82.</p>
+<p>Quelle a été cette discipline au cours de chacune des éditions ?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>taille2 <span class="ot">&lt;-</span> table_olympics <span class="sc">|&gt;</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(isSummer<span class="sc">==</span><span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Sex <span class="sc">==</span> <span class="st">"1"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year, Sport) <span class="sc">|&gt;</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">moyenne_taille_sport =</span> <span class="fu">mean</span>(Height, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>taille_annee <span class="ot">&lt;-</span> taille2 <span class="sc">|&gt;</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(moyenne_taille_sport)) <span class="sc">|&gt;</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">|&gt;</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> moyenne_taille_sport, <span class="at">n =</span> <span class="dv">1</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(taille_annee)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Mais au fil du temps, bien que le basketball ait souvent eu les plus grandes athlètes olympiques, il n’est pas le seul. On retrouve également des athlètes de grande taille dans d’autres disciplines telles que l’athlétisme, l’escrime, l’équitation, la natation et le volleyball.</p>
+<p>Nombre de fois où chaque discipline a été la discipline avec les plus grandes athlètes :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>taille_annee <span class="sc">|&gt;</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Sport, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+  Sport             n
+  &lt;chr&gt;         &lt;int&gt;
+1 Basketball       10
+2 Fencing           4
+3 Volleyball        4
+4 Athletics         2
+5 Swimming          2
+6 Equestrianism     1</code></pre>
+</div>
+</div>
+<p>10 fois pour le basketball, 4 fois pour le fencing et volleyball, 2 fois pour l’Athletisme et la natation et une fois pour equestrianism</p>
+</section>
+<section id="combien-de-temps-sépare-les-éditions-des-jo-de-rio-tokyo-et-paris" class="level2">
+<h2 class="anchored" data-anchor-id="combien-de-temps-sépare-les-éditions-des-jo-de-rio-tokyo-et-paris">Combien de temps sépare les éditions des JO de Rio, Tokyo et Paris ?</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>texte <span class="ot">&lt;-</span> <span class="st">"Les jeux olympiques d’été se déroulent normalement tous les 4 ans, durant les mois</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="st">de Juillet et Août. Les jeux de Rio ont eu lieu du 5 Août 2016 au 20 Août 2016,</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="st">ceux de Tokyo du 23 Juillet 2021 au 8 Août 2021, et ceux de Paris auront lieu du</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="st">26 Juillet 2024 au 11 Août 2024. Plus de 10000 athlètes sont attendus du monde</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="st">entier à Paris."</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>dates <span class="ot">&lt;-</span> <span class="fu">str_extract_all</span>(texte, <span class="st">"</span><span class="sc">\\</span><span class="st">d{1,2} (Juillet|Août) </span><span class="sc">\\</span><span class="st">d{4}"</span>)</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>dates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] "5 Août 2016"     "20 Août 2016"    "23 Juillet 2021" "8 Août 2021"    
+[5] "26 Juillet 2024" "11 Août 2024"   </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remplacement des noms des mois par leur numéro :</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>dates_format <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(dates[[<span class="dv">1</span>]], <span class="fu">c</span>(<span class="st">"Juillet"</span><span class="ot">=</span><span class="st">"07"</span>, <span class="st">"Août"</span><span class="ot">=</span><span class="st">"08"</span>))</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>dates_format</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "5 08 2016"  "20 08 2016" "23 07 2021" "8 08 2021"  "26 07 2024"
+[6] "11 08 2024"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Conversion des éléments en date</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>dates_transfo <span class="ot">&lt;-</span> <span class="fu">dmy</span>(dates_format)</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>dates_transfo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "2016-08-05" "2016-08-20" "2021-07-23" "2021-08-08" "2024-07-26"
+[6] "2024-08-11"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcul du temps séparant les éditions en jours et semaines</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>rio_tokyo_jours <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">difftime</span>(<span class="fu">dmy</span>(<span class="st">"23 Juillet 2021"</span>), <span class="fu">dmy</span>(<span class="st">"20 Août 2016"</span>), <span class="at">units =</span> <span class="st">"days"</span>))</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Nombre de jours séparant les éditions de Rio et Tokyo :"</span>, rio_tokyo_jours, <span class="st">" jours."</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Nombre de jours séparant les éditions de Rio et Tokyo : 1798  jours."</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>tokyo_paris_jours <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">difftime</span>(<span class="fu">dmy</span>(<span class="st">"26 Juillet 2024"</span>), <span class="fu">dmy</span>(<span class="st">"8 Août 2021"</span>), <span class="at">units =</span> <span class="st">"days"</span>))</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Nombre de jours séparant les éditions de Tokyo et Paris :"</span>, tokyo_paris_jours, <span class="st">" jours."</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Nombre de jours séparant les éditions de Tokyo et Paris : 1083  jours."</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>rio_tokyo_semaines <span class="ot">&lt;-</span> <span class="fu">round</span>(rio_tokyo_jours <span class="sc">/</span> <span class="dv">7</span>,<span class="dv">0</span>)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Nombre de semaines séparant les éditions de Rio et Tokyo :"</span>, rio_tokyo_semaines, <span class="st">" semaines."</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Nombre de semaines séparant les éditions de Rio et Tokyo : 257  semaines."</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>tokyo_paris_semaines <span class="ot">&lt;-</span> <span class="fu">round</span>(tokyo_paris_jours <span class="sc">/</span> <span class="dv">7</span>,<span class="dv">0</span>)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Nombre de semaines séparant les éditions de Tokyo et Paris :"</span>, rio_tokyo_semaines, <span class="st">" semaines."</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Nombre de semaines séparant les éditions de Tokyo et Paris : 257  semaines."</code></pre>
+</div>
+</div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="athletes.jpg" class="img-fluid figure-img"></p>
